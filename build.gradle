@@ -1,0 +1,45 @@
+apply plugin: 'java'
+
+repositories {
+	jcenter()
+}
+
+dependencies {
+	compile ([
+		'org.apache.commons:commons-math3:3.6.1',
+		'org.jfree:jfreechart-swt:1.0'		
+	])
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.ajoberstar:grgit:1.7.0-rc.1'
+    }
+}
+
+ext {
+	def dateFormat = new java.text.SimpleDateFormat('yyyy-MM-dd')	 
+	dateStamp = dateFormat.format(Calendar.getInstance().getTime())
+
+	git = org.ajoberstar.grgit.Grgit.open(projectDir)
+	gitIsClean = git.status().isClean()
+	gitCommitHash = gitIsClean?git.head().id:''
+	gitCommitterDate = gitIsClean?dateFormat.format(git.head().date):''
+	gitAbbreviatedCommitHash = gitIsClean?git.head().abbreviatedId:''	
+}
+
+jar {
+    manifest {
+        attributes(
+        	"Author": "Frederic Fays",
+			"Git-Commiter-Date": project.ext.gitCommitterDate,
+			"Git-Commit-Hash": project.ext.gitCommitHash
+		)
+    }
+    classifier project.ext.gitAbbreviatedCommitHash.isEmpty()?'devel':gitAbbreviatedCommitHash
+}
+
