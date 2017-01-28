@@ -48,11 +48,11 @@ public class DealExtremeWishList {
 
 			final Pattern pattern = Pattern.compile("http://www.dx.com/p/(\\d+)");
 
-			int pageIndex = 47;
-			final Document doc = fetchWishListPage(ua, pageIndex);
 			final List<Article> articles = new ArrayList<>();
+			int pageIndex = 1;
+			Document doc = fetchWishListPage(ua, pageIndex);
 			while (doc.getElementsByTag("div").stream().filter(e -> "Page index out of range".equals(e.text())).count() == 0) {
-				LOGGER.info(format("page: {0,number,0}", pageIndex));
+				LOGGER.info(format("Page: {0,number,0}", pageIndex));
 				for (Element anchorElement : doc.select("div.wishlist div.pi > p.title > a")) {
 					final Matcher matcher = pattern.matcher(anchorElement.attr("href"));
 					if (matcher.find()) {
@@ -73,14 +73,13 @@ public class DealExtremeWishList {
 
 						final Article article = new Article(sku, available, price, description);
 						articles.add(article);
-						LOGGER.info(article.toString());
+						// LOGGER.info(article.toString());
 					}
 
 				}
 
-				break;
-				// pageIndex++;
-				// doc = fetchWishListPage(ua, pageIndex);
+				pageIndex++;
+				doc = fetchWishListPage(ua, pageIndex);
 			}
 
 			final WishList wishList = new WishList(articles);
