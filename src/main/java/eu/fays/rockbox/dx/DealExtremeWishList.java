@@ -4,10 +4,13 @@ import static java.text.MessageFormat.format;
 import static java.util.stream.Collectors.toList;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -44,31 +47,44 @@ public class DealExtremeWishList {
 			assert rc1 < 400;
 
 			final Pattern pattern = Pattern.compile("http://www.dx.com/p/(\\d+)");
-			
-			int pageIndex=47;
-			Document doc = fetchWishListPage(ua, pageIndex);
-			while(doc.getElementsByTag("div").stream().filter(e -> "Page index out of range".equals(e.text())).count() == 0) {
-				for (Element anchorElement : doc.select("div.wishlist div.pi > p.title > a")) {					
-					Matcher matcher = pattern.matcher(anchorElement.attr("href"));
-					if(matcher.find()) {
+
+			int pageIndex = 47;
+			final Document doc = fetchWishListPage(ua, pageIndex);
+			List<Article> articles = new ArrayList<>();
+			while (doc.getElementsByTag("div").stream().filter(e -> "Page index out of range".equals(e.text())).count() == 0) {
+				LOGGER.info(format("page: {0,number,0}", pageIndex));
+				for (Element anchorElement : doc.select("div.wishlist div.pi > p.title > a")) {
+					final Matcher matcher = pattern.matcher(anchorElement.attr("href"));
+					if (matcher.find()) {
 						final Element divElement = anchorElement.parent().parent();
 						final int sku = Integer.parseInt(matcher.group(1));
 						final String description = anchorElement.text().trim();
-						Element priceElement = divElement.select("p.price").first();
-						String price = "na";
-						if(priceElement != null) {
-								price = priceElement.text();
+						BigDecimal price = BigDecimal.ZERO;
+						final Element priceElement = divElement.select("p.price").first();
+						if (priceElement != null) {
+							try {
+								String priceAsString = priceElement.text().replaceAll("[^\\p{Digit}.]", "");
+								price = new BigDecimal(priceAsString);
+							} catch (NumberFormatException e) {
+								// Do Nothing
+							}
 						}
-						boolean disabled = divElement.select("a.disable").size() > 0;
-						LOGGER.info(format("{0,number,0} - {1} - {2} - {3}", sku, price, disabled, description));
+						final boolean available = divElement.select("a.disable").isEmpty();
+
+						final Article article = new Article(sku, available, price, description);
+						articles.add(article);
+						LOGGER.info(article.toString());
 					}
 
 				}
 
 				break;
-//				pageIndex++;
-//				doc = fetchWishListPage(ua, pageIndex);
+				// pageIndex++;
+				// doc = fetchWishListPage(ua, pageIndex);
 			}
+
+			final WishList wishList = new WishList(articles);
+			wishList.marshal(new File("wishlist.xml"));
 		}
 	}
 
