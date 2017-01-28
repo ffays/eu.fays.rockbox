@@ -50,7 +50,7 @@ public class DealExtremeWishList {
 
 			int pageIndex = 47;
 			final Document doc = fetchWishListPage(ua, pageIndex);
-			List<Article> articles = new ArrayList<>();
+			final List<Article> articles = new ArrayList<>();
 			while (doc.getElementsByTag("div").stream().filter(e -> "Page index out of range".equals(e.text())).count() == 0) {
 				LOGGER.info(format("page: {0,number,0}", pageIndex));
 				for (Element anchorElement : doc.select("div.wishlist div.pi > p.title > a")) {
@@ -63,9 +63,9 @@ public class DealExtremeWishList {
 						final Element priceElement = divElement.select("p.price").first();
 						if (priceElement != null) {
 							try {
-								String priceAsString = priceElement.text().replaceAll("[^\\p{Digit}.]", "");
+								final String priceAsString = priceElement.text().replaceAll("[^\\p{Digit}.]", "");
 								price = new BigDecimal(priceAsString);
-							} catch (NumberFormatException e) {
+							} catch (final NumberFormatException e) {
 								// Do Nothing
 							}
 						}

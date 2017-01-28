@@ -14,7 +14,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.util.ValidationEventCollector;
@@ -50,6 +49,7 @@ public class WishList {
 		final JAXBContext context = JAXBContext.newInstance(getClass());
 		final Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
+		marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders","<?xml-stylesheet type=\"text/xsl\" href=\"style/wishlist.xslt\"?>");
 		// marshaller.setProperty(JAXB_NO_NAMESPACE_SCHEMA_LOCATION, "../" + XML_SCHEMA_FILE.getPath().replace(System.getProperty("file.separator"), "/"));
 		marshaller.marshal(this, file);
 	}
@@ -87,8 +87,9 @@ public class WishList {
 
 	}
 
-	@XmlElementWrapper
-	@XmlElement(name = "articles")
+//	@XmlElementWrapper
+//	@XmlElement(name = "articles")
+	@XmlElement(name = "article")
 	private List<Article> articles = null;
 
 	/** The XML schema file to validate this class */

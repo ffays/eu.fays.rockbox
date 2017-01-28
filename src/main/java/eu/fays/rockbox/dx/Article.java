@@ -6,8 +6,9 @@ import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "sku", "available", "price", "description" })
@@ -42,12 +43,12 @@ public class Article {
 		return sku == ((Article) o).sku;
 	}
 
-	@XmlElement
+	@XmlAttribute
 	public int sku;
-	@XmlElement
+	@XmlAttribute
 	public boolean available;
-	@XmlElement
+	@XmlAttribute
 	public BigDecimal price;
-	@XmlElement
+	@XmlValue
 	public String description;
 }
