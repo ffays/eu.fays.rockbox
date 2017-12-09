@@ -140,6 +140,10 @@ public class DealExtremeWishList {
 
 		final String login = System.getProperty("login");
 		final String password = System.getProperty("password");
+		if(login == null || password == null) {
+			System.err.println("Either login or password has not been provided!");
+			System.exit(1);
+		}
 		final List<BasicNameValuePair> form = Stream.of(new BasicNameValuePair("AccountName", login), new BasicNameValuePair("Password", password)).collect(toList());
 
 		/* @formatter:off */
