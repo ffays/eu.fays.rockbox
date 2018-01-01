@@ -8,6 +8,7 @@ import static java.text.MessageFormat.format;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.getCommonPrefix;
+import static java.util.regex.Pattern.compile; 
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -55,11 +56,16 @@ public class DownloadScriptGenerator {
 					.collect(toList());
 			/* @formatter:on */
 			final String line0 = lines.get(0);
-			final String line1 = lines.get(lines.size()-1);
+			final String line1 = lines.get(1);
+			final String lineN = lines.get(lines.size()-1);
 			final String prefix = getCommonPrefix(line0, line1);
+			final String suffix = new StringBuilder(getCommonPrefix(new StringBuilder(line0).reverse().toString(), new StringBuilder(line1).reverse().toString())).reverse().toString(); 
+			final boolean isPrefixURI = prefix.startsWith("http");
+			final String basename = isPrefixURI?prefix.substring(prefix.lastIndexOf('/')+1):prefix;
+			
 
-			final Pattern pattern = Pattern.compile(".*\\D(\\d+)\\.ts");
-			final Matcher matcher = pattern.matcher(line1);
+			final Pattern pattern = compile(format("\\Q{0}\\E(\\d+)\\Q{1}\\E", prefix, suffix));
+			final Matcher matcher = pattern.matcher(lineN);
 			if (matcher.find()) {
 				final int n = parseInt(matcher.group(1));
 				final String path = uri.getPath().substring(0, uri.getPath().lastIndexOf('/') + 1);
@@ -73,7 +79,12 @@ public class DownloadScriptGenerator {
 				/* @formatter:on */
 
 				/* @formatter:off */
-				final String command = format("# for i in $(seq 1 {1,number,0}); do curl -o '\"'{0}$i.ts'\"' '\"'{2}{0}$i.ts'\"'; done", prefix, n, uriBase.toString());
+				final String command = format("# for i in $(seq 1 {0,number,0}); do curl -s -S -w ''%'{'filename_effective'}'\\n'' -o '\"'{1}$i{2}'\"' '\"'{3}{4}$i{2}'\"'; done"
+					, n
+					, basename
+					, suffix
+					, isPrefixURI?prefix:uriBase.toString()
+					, isPrefixURI?"":basename);
 				/* @formatter:on */
 
 				/* @formatter:off */				
@@ -83,7 +94,7 @@ public class DownloadScriptGenerator {
 							final Matcher m = pattern.matcher(l);
 							if(m.find()) {
 								final int i = parseInt(m.group(1));
-								return format("{0}{1,number,0}.ts", prefix, i);
+								return format("{0}{1,number,0}{2}", basename, i, suffix);
 							} else {
 								return "";
 							}
