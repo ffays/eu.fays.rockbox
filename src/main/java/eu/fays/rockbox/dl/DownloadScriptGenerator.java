@@ -67,8 +67,9 @@ public class DownloadScriptGenerator {
 			final String prefix = getCommonPrefix(line0, line1);
 			final String suffix = new StringBuilder(getCommonPrefix(new StringBuilder(line0).reverse().toString(), new StringBuilder(line1).reverse().toString())).reverse().toString(); 
 			final boolean isPrefixURI = prefix.startsWith("http");
-			final String basename = isPrefixURI?prefix.substring(prefix.lastIndexOf('/')+1):prefix;
-			
+			final String fileNamePrefix = isPrefixURI?prefix.substring(prefix.lastIndexOf('/')+1):prefix;
+			final String query = new URI(line0).getQuery();
+			final String fileNameSuffix = query != null && !query.isEmpty()?suffix.substring(0, suffix.length()-query.length()-1):suffix;
 
 			final Pattern pattern = compile(format("\\Q{0}\\E(\\d+)\\Q{1}\\E", prefix, suffix));
 			final Matcher matcher = pattern.matcher(lineN);
@@ -85,12 +86,13 @@ public class DownloadScriptGenerator {
 				/* @formatter:on */
 
 				/* @formatter:off */
-				final String command = format("# for i in $(seq 1 {0,number,0}); do curl -s -S -w ''%'{'filename_effective'}'\\n'' -o '\"'{1}$i{2}'\"' '\"'{3}{4}$i{2}'\"'; done"
+				final String command = format("# for i in $(seq 1 {0,number,0}); do curl -s -S -w ''%'{'filename_effective'}'\\n'' -o '\"'{1}$i{5}'\"' '\"'{3}{4}$i{2}'\"'; done"
 					, n
-					, basename
+					, fileNamePrefix
 					, suffix
 					, isPrefixURI?prefix:uriBase.toString()
-					, isPrefixURI?"":basename);
+					, isPrefixURI?"":fileNamePrefix
+					, fileNameSuffix);
 				/* @formatter:on */
 
 				/* @formatter:off */				
@@ -100,7 +102,7 @@ public class DownloadScriptGenerator {
 							final Matcher m = pattern.matcher(l);
 							if(m.find()) {
 								final int i = parseInt(m.group(1));
-								return format("{0}{1,number,0}{2}", basename, i, suffix);
+								return format("{0}{1,number,0}{2}", fileNamePrefix, i, fileNameSuffix);
 							} else {
 								return "";
 							}
