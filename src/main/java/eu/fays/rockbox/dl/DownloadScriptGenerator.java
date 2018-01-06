@@ -47,6 +47,12 @@ public class DownloadScriptGenerator {
 	 */
 	public static void main(String[] args) throws Exception {
 		final String url = getProperty("url");
+		
+		if(url == null || url.isEmpty()) {
+			System.err.println("Missing 'url' argument!");
+			System.exit(1);
+		}
+
 		try (final CloseableHttpClient ua = createHttpClient()) {
 			final URI uri = new URI(url);
 			final List<String> list = fetchPlayList(ua, uri);
