@@ -47,7 +47,8 @@ public class DownloadScriptGenerator {
 	 */
 	public static void main(String[] args) throws Exception {
 		final String url = getProperty("url");
-		
+		final boolean flagFull = getProperty("full") != null;
+				
 		if(url == null || url.isEmpty()) {
 			System.err.println("Missing 'url' argument!");
 			System.exit(1);
@@ -86,7 +87,7 @@ public class DownloadScriptGenerator {
 				/* @formatter:on */
 
 				/* @formatter:off */
-				final String command = format("# for i in $(seq 1 {0,number,0}); do curl -s -S -w ''%'{'filename_effective'}'\\n'' -o '\"'{1}$i{5}'\"' '\"'{3}{4}$i{2}'\"'; done"
+				final String command = format("for i in $(seq 1 {0,number,0}); do curl -s -S -w ''%'{'filename_effective'}'\\n'' -o '\"'{1}$i{5}'\"' '\"'{3}{4}$i{2}'\"'; done"
 					, n
 					, fileNamePrefix
 					, suffix
@@ -95,22 +96,24 @@ public class DownloadScriptGenerator {
 					, fileNameSuffix);
 				/* @formatter:on */
 
-				/* @formatter:off */				
-				list.stream()
-					.map(l -> {
-						if(l.length() > 0 && l.charAt(0) != '#') {
-							final Matcher m = pattern.matcher(l);
-							if(m.find()) {
-								final int i = parseInt(m.group(1));
-								return format("{0}{1,number,0}{2}", fileNamePrefix, i, fileNameSuffix);
+				/* @formatter:off */	
+				if(flagFull) {
+					list.stream()
+						.map(l -> {
+							if(l.length() > 0 && l.charAt(0) != '#') {
+								final Matcher m = pattern.matcher(l);
+								if(m.find()) {
+									final int i = parseInt(m.group(1));
+									return format("{0}{1,number,0}{2}", fileNamePrefix, i, fileNameSuffix);
+								} else {
+									return "";
+								}
 							} else {
-								return "";
+								return l;
 							}
-						} else {
-							return l;
-						}
-					})
-					.forEach(l -> out.println(l));
+						})
+						.forEach(l -> out.println(l));
+				}
 				/* @formatter:on */
 				out.println(command);
 			}
