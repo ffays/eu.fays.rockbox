@@ -20,6 +20,7 @@ import javax.xml.bind.util.ValidationEventCollector;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.xml.sax.SAXException;
 
 @XmlRootElement
@@ -45,8 +46,8 @@ public class WishList {
 		//
 		assert file != null;
 		//
-
-		final JAXBContext context = JAXBContext.newInstance(getClass());
+		
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] {WishList.class}, null);
 		final Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
 		marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders","<?xml-stylesheet type=\"text/xsl\" href=\"style/wishlist.xslt\"?>");
@@ -68,8 +69,7 @@ public class WishList {
 		assert file.isFile();
 		assert file.canRead();
 		//
-
-		final JAXBContext context = JAXBContext.newInstance(WishList.class);
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] {WishList.class}, null);
 		final SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
 		final Schema schema = factory.newSchema(XML_SCHEMA_FILE);
 

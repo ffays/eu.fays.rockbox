@@ -6,13 +6,21 @@ repositories {
 }
 
 dependencies {
-	compile ([
-		'org.jsoup:jsoup:1.9.1',
-		'org.apache.httpcomponents:httpclient:4.5.3',
-		'org.apache.directory.studio:org.apache.commons.io:2.4',
-		'org.apache.poi:poi-scratchpad:3.17',	
-		'org.apache.commons:commons-lang3:3.7'
-	])
+	compile 'javax.xml.bind:jaxb-api:2.3.1'	
+	compile 'org.jsoup:jsoup:1.9.1'
+	compile 'org.apache.httpcomponents:httpclient:4.5.3'
+	compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
+	compile 'org.apache.poi:poi-scratchpad:3.17'	
+	compile 'org.apache.commons:commons-lang3:3.7'
+	compile 'com.h2database:h2:1.4.199'
+
+	// c.f. https://stackoverflow.com/questions/45870753/eclipselink-2-7-0-and-jpa-api-2-2-0-signature-mismatch
+	compile('org.eclipse.persistence:eclipselink:2.7.4') {
+		exclude module: 'jakarta.persistence'
+	}
+	
+	compile 'org.eclipse.persistence:org.eclipse.persistence.moxy:2.7.4'
+	compile 'org.eclipse.persistence:javax.persistence:2.2.1'
 }
 
 buildscript {
