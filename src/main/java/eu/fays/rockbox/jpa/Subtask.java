@@ -1,22 +1,24 @@
 package eu.fays.rockbox.jpa;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 
 @Entity(name = "subtask")
-//@IdClass(SubtaskPK.class)
 public class Subtask {
 
+	@EmbeddedId
+	public SubtaskPK pk;
+
 	@ManyToOne
-	@JoinColumn(name = "task_name")
+	@JoinColumns({ @JoinColumn(name = "scenario_name", referencedColumnName = "scenario_name", insertable = false, updatable = false),
+			@JoinColumn(name = "task_name", referencedColumnName = "task_name", insertable = false, updatable = false), })
 	public Task task;
 
-	@Id
-	@Column(name = "subtask_name")
+	@Column(name = "subtask_name", insertable = false, updatable = false)
 	public String name;
 
 	@Column(name = "description")
@@ -29,6 +31,8 @@ public class Subtask {
 	public Subtask(Task task, String name) {
 		this.task = task;
 		this.name = name;
+
+		pk = new SubtaskPK(task.scenario.name, task.name, name);
 		this.task.subtasks.add(this);
 	}
 
@@ -43,6 +47,19 @@ public class Subtask {
 			return false;
 		}
 
-		return task.scenario.name.equals(((Subtask) o).task.scenario.name) && task.name.equals(((Subtask) o).task.name) && name.equals(((Task) o).name);
+		if (name.equals(((Subtask) o).name)) {
+			if (task.name.equals(((Subtask) o).task.name)) {
+				if (task.scenario.name.equals(((Subtask) o).task.scenario.name)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "'" + name + "'";
 	}
 }

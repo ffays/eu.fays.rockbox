@@ -1,12 +1,13 @@
 package eu.fays.rockbox.jpa;
 
+import static javax.persistence.CascadeType.PERSIST;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.CascadeType.PERSIST;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -14,12 +15,14 @@ import javax.persistence.OneToMany;
 @Entity(name = "task")
 public class Task {
 
+	@EmbeddedId
+	public TaskPK pk;
+
 	@ManyToOne
-	@JoinColumn(name = "scenario_name")
+	@JoinColumn(name = "scenario_name", insertable = false, updatable = false)
 	public Scenario scenario;
 
-	@Id
-	@Column(name = "task_name")
+	@Column(name = "task_name", insertable = false, updatable = false)
 	public String name;
 
 	@Column(name = "description")
@@ -35,6 +38,7 @@ public class Task {
 	public Task(Scenario scenario, String name) {
 		this.scenario = scenario;
 		this.name = name;
+		pk = new TaskPK(scenario.name, name);
 		this.scenario.tasks.add(this);
 	}
 
@@ -49,7 +53,36 @@ public class Task {
 			return false;
 		}
 
-		return scenario.name.equals(((Task) o).scenario.name) && name.equals(((Task) o).name);
+		if (name.equals(((Task) o).name)) {
+			if (scenario.name.equals(((Task) o).scenario.name)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder result = new StringBuilder();
+		result.append('[');
+		result.append('\'');
+		result.append(name);
+		result.append('\'');
+		result.append(',');
+		result.append('[');
+		boolean flag = false;
+		for (Subtask subtask : subtasks) {
+			if (flag) {
+				result.append(',');
+			} else {
+				flag = true;
+			}
+			result.append(subtask.toString());
+		}
+		result.append(']');
+		result.append(']');
+		return result.toString();
 	}
 
 }
