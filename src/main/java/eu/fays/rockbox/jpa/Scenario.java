@@ -1,16 +1,21 @@
 package eu.fays.rockbox.jpa;
 
-import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.ALL;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-@Entity(name = "scenario")
+@Entity
+@Table(schema = "kanban", name = "scenario")
 public class Scenario {
 
 	@Id
@@ -20,7 +25,17 @@ public class Scenario {
 	@Column(name = "description")
 	public String description;
 
-	@OneToMany(mappedBy = "scenario", cascade = PERSIST)
+	@Column
+	@Enumerated(EnumType.STRING)
+	public Board board = Board.BACKLOG;
+
+	@Column
+	public boolean archived = false;
+
+	@Column
+	public LocalDateTime created = LocalDateTime.now();
+
+	@OneToMany(mappedBy = "scenario", cascade = ALL, orphanRemoval = true)
 	public List<Task> tasks = new ArrayList<Task>();
 
 	public Scenario() {

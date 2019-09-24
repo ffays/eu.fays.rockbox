@@ -12,10 +12,10 @@ public class MappingEssay {
 
 		// Delete all scenarios
 		{
-			final Query query = em.createQuery("DELETE FROM scenario");
-			em.getTransaction().begin();
-			query.executeUpdate();
-			em.getTransaction().commit();
+//			final Query query = em.createQuery("DELETE FROM kanban.scenario");
+//			em.getTransaction().begin();
+//			query.executeUpdate();
+//			em.getTransaction().commit();
 		}
 
 		// Create scenario1
@@ -42,6 +42,8 @@ public class MappingEssay {
 			System.out.println(scenario1);
 
 			scenario1.tasks.get(0).subtasks.remove(0);
+			scenario1.tasks.get(0).progress = (int) (Math.random() * 100d);
+			scenario1.tasks.get(1).progress = (int) (Math.random() * 100d);
 			em.getTransaction().begin();
 			em.refresh(scenario1);
 			em.getTransaction().commit();

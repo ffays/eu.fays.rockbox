@@ -1,6 +1,6 @@
 package eu.fays.rockbox.jpa;
 
-import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.ALL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,24 +11,29 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-@Entity(name = "task")
+@Entity
+@Table(schema = "kanban", name = "task")
 public class Task {
 
 	@EmbeddedId
 	public TaskPK pk;
 
-	@ManyToOne
+	@ManyToOne(cascade = ALL)
 	@JoinColumn(name = "scenario_name", insertable = false, updatable = false)
 	public Scenario scenario;
 
 	@Column(name = "task_name", insertable = false, updatable = false)
 	public String name;
 
+	@Column
+	public int progress;
+
 	@Column(name = "description")
 	public String description;
 
-	@OneToMany(mappedBy = "task", cascade = PERSIST)
+	@OneToMany(mappedBy = "task", cascade = ALL, orphanRemoval = true)
 	public List<Subtask> subtasks = new ArrayList<>();
 
 	public Task() {

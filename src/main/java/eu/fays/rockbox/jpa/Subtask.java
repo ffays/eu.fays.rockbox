@@ -6,17 +6,23 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity(name = "subtask")
+@Entity
+@Table(schema = "kanban", name = "subtask")
 public class Subtask {
 
 	@EmbeddedId
 	public SubtaskPK pk;
 
+	// @formatter:off
 	@ManyToOne
-	@JoinColumns({ @JoinColumn(name = "scenario_name", referencedColumnName = "scenario_name", insertable = false, updatable = false),
-			@JoinColumn(name = "task_name", referencedColumnName = "task_name", insertable = false, updatable = false), })
+	@JoinColumns({ 
+		@JoinColumn(name = "scenario_name", referencedColumnName = "scenario_name", insertable = false, updatable = false),
+		@JoinColumn(name = "task_name", referencedColumnName = "task_name", insertable = false, updatable = false)
+	})
 	public Task task;
+	// @formatter:on
 
 	@Column(name = "subtask_name", insertable = false, updatable = false)
 	public String name;
