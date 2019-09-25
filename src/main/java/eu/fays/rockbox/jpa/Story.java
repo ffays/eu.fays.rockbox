@@ -12,6 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -38,6 +39,7 @@ public class Story {
 	public LocalDateTime created = LocalDateTime.now();
 
 	@OneToMany(mappedBy = "story", cascade = ALL, orphanRemoval = true)
+	@OrderColumn(name="index")
 	@CascadeOnDelete
 	public List<Task> tasks = new ArrayList<>();
 

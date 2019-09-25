@@ -15,6 +15,9 @@ public class Subtask {
 	@EmbeddedId
 	public SubtaskPK pk;
 
+	@Column
+	public int index;
+
 	// @formatter:off
 	@ManyToOne
 	@JoinColumns({ 

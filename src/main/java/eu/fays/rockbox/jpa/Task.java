@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -22,6 +23,9 @@ public class Task {
 	@EmbeddedId
 	public TaskPK pk;
 
+	@Column
+	public int index;
+	
 	@ManyToOne(cascade = ALL)
 	@JoinColumn(name = "story_name", insertable = false, updatable = false)
 	public Story story;
@@ -36,6 +40,7 @@ public class Task {
 	public String description;
 
 	@OneToMany(mappedBy = "task", cascade = ALL, orphanRemoval = true)
+	@OrderColumn(name="index")
 	@CascadeOnDelete
 	public List<Subtask> subtasks = new ArrayList<>();
 
