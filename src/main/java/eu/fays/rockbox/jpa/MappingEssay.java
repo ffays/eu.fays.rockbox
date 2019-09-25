@@ -44,6 +44,7 @@ public class MappingEssay {
 			scenario1.tasks.get(0).subtasks.remove(0);
 			scenario1.tasks.get(0).progress = (int) (Math.random() * 100d);
 			scenario1.tasks.get(1).progress = (int) (Math.random() * 100d);
+			System.out.println(scenario1);
 			em.getTransaction().begin();
 			em.refresh(scenario1);
 			em.getTransaction().commit();
@@ -51,6 +52,7 @@ public class MappingEssay {
 		// Reload scenario1
 
 		{
+			em.getEntityManagerFactory().getCache().evict(Task.class, new TaskPK("scenario1", "task1"));
 			final Scenario scenario1 = em.find(Scenario.class, "scenario1");
 			System.out.println(scenario1);
 		}

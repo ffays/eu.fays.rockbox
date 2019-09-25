@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.CascadeOnDelete;
+
 @Entity
 @Table(schema = "kanban", name = "task")
 public class Task {
@@ -34,6 +36,7 @@ public class Task {
 	public String description;
 
 	@OneToMany(mappedBy = "task", cascade = ALL, orphanRemoval = true)
+	@CascadeOnDelete
 	public List<Subtask> subtasks = new ArrayList<>();
 
 	public Task() {
@@ -69,25 +72,7 @@ public class Task {
 
 	@Override
 	public String toString() {
-		final StringBuilder result = new StringBuilder();
-		result.append('[');
-		result.append('\'');
-		result.append(name);
-		result.append('\'');
-		result.append(',');
-		result.append('[');
-		boolean flag = false;
-		for (Subtask subtask : subtasks) {
-			if (flag) {
-				result.append(',');
-			} else {
-				flag = true;
-			}
-			result.append(subtask.toString());
-		}
-		result.append(']');
-		result.append(']');
-		return result.toString();
+		return name + " \u21d2 " + subtasks.toString();
 	}
 
 }

@@ -62,25 +62,7 @@ public class Scenario {
 
 	@Override
 	public String toString() {
-		final StringBuilder result = new StringBuilder();
-		result.append('[');
-		result.append('\'');
-		result.append(name);
-		result.append('\'');
-		result.append(',');
-		result.append('[');
-		boolean flag = false;
-		for (Task task : tasks) {
-			if (flag) {
-				result.append(',');
-			} else {
-				flag = true;
-			}
-			result.append(task.toString());
-		}
-		result.append(']');
-		result.append(']');
-		return result.toString();
+		return name + " \u21d2 " + tasks.toString();
 	}
 
 }

@@ -66,6 +66,6 @@ public class Subtask {
 
 	@Override
 	public String toString() {
-		return "'" + name + "'";
+		return name;
 	}
 }
