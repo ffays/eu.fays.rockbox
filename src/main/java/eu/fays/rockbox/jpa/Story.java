@@ -39,7 +39,7 @@ public class Story {
 
 	@OneToMany(mappedBy = "story", cascade = ALL, orphanRemoval = true)
 	@CascadeOnDelete
-	public List<Task> tasks = new ArrayList<Task>();
+	public List<Task> tasks = new ArrayList<>();
 
 	public Story() {
 

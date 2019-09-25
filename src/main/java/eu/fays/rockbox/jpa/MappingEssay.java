@@ -1,16 +1,16 @@
 package eu.fays.rockbox.jpa;
 
+import static javax.persistence.Persistence.createEntityManagerFactory;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
 
 public class MappingEssay {
 	public static void main(String[] args) throws Exception {
-		final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("h2pu");
+		final EntityManagerFactory entityManagerFactory = createEntityManagerFactory("h2pu");
 		final EntityManager em = entityManagerFactory.createEntityManager();
 
-		// Delete all storys
+		// Delete all stories
 		{
 //			final Query query = em.createQuery("DELETE FROM kanban.story");
 //			em.getTransaction().begin();

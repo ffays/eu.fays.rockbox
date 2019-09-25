@@ -49,9 +49,17 @@ jar {
         attributes(
         	"Author": "Frederic Fays",
 			"Git-Commiter-Date": project.ext.gitCommitterDate,
-			"Git-Commit-Hash": project.ext.gitCommitHash
+			"Git-Commit-Hash": project.ext.gitCommitHash,
+			'Class-Path': configurations.runtimeClasspath.collect{ 'lib/' + it.getName() }.sort{ a,b -> b <=> a }.join(' '),
+			'Main-Class': 'eu.fays.rockbox.jpa.MappingEssay'
 		)
     }
     classifier project.ext.gitAbbreviatedCommitHash.isEmpty()?'devel':gitAbbreviatedCommitHash
+    dependsOn 'copyLibs'
 }
 
+
+task copyLibs(type: Copy) {
+	from sourceSets.main.compileClasspath
+	into "${project.buildDir}/${project.libsDirName}/lib"
+}
