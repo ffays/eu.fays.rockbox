@@ -18,7 +18,7 @@ public class Subtask {
 	// @formatter:off
 	@ManyToOne
 	@JoinColumns({ 
-		@JoinColumn(name = "scenario_name", referencedColumnName = "scenario_name", insertable = false, updatable = false),
+		@JoinColumn(name = "story_name", referencedColumnName = "story_name", insertable = false, updatable = false),
 		@JoinColumn(name = "task_name", referencedColumnName = "task_name", insertable = false, updatable = false)
 	})
 	public Task task;
@@ -38,13 +38,13 @@ public class Subtask {
 		this.task = task;
 		this.name = name;
 
-		pk = new SubtaskPK(task.scenario.name, task.name, name);
+		pk = new SubtaskPK(task.story.name, task.name, name);
 		this.task.subtasks.add(this);
 	}
 
 	@Override
 	public int hashCode() {
-		return task.scenario.name.hashCode() * 31 + task.name.hashCode() * 7 + name.hashCode();
+		return task.story.name.hashCode() * 31 + task.name.hashCode() * 7 + name.hashCode();
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class Subtask {
 
 		if (name.equals(((Subtask) o).name)) {
 			if (task.name.equals(((Subtask) o).task.name)) {
-				if (task.scenario.name.equals(((Subtask) o).task.scenario.name)) {
+				if (task.story.name.equals(((Subtask) o).task.story.name)) {
 					return true;
 				}
 			}

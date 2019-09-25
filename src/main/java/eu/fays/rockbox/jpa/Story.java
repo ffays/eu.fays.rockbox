@@ -14,12 +14,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.CascadeOnDelete;
+
 @Entity
-@Table(schema = "kanban", name = "scenario")
-public class Scenario {
+@Table(schema = "kanban", name = "story")
+public class Story {
 
 	@Id
-	@Column(name = "scenario_name")
+	@Column(name = "story_name")
 	public String name;
 
 	@Column(name = "description")
@@ -35,14 +37,15 @@ public class Scenario {
 	@Column
 	public LocalDateTime created = LocalDateTime.now();
 
-	@OneToMany(mappedBy = "scenario", cascade = ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "story", cascade = ALL, orphanRemoval = true)
+	@CascadeOnDelete
 	public List<Task> tasks = new ArrayList<Task>();
 
-	public Scenario() {
+	public Story() {
 
 	}
 
-	public Scenario(String name) {
+	public Story(String name) {
 		this.name = name;
 	}
 
@@ -53,11 +56,11 @@ public class Scenario {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == null || !(o instanceof Scenario)) {
+		if (o == null || !(o instanceof Story)) {
 			return false;
 		}
 
-		return name.equals(((Scenario) o).name);
+		return name.equals(((Story) o).name);
 	}
 
 	@Override

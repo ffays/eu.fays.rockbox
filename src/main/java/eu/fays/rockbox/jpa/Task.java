@@ -23,8 +23,8 @@ public class Task {
 	public TaskPK pk;
 
 	@ManyToOne(cascade = ALL)
-	@JoinColumn(name = "scenario_name", insertable = false, updatable = false)
-	public Scenario scenario;
+	@JoinColumn(name = "story_name", insertable = false, updatable = false)
+	public Story story;
 
 	@Column(name = "task_name", insertable = false, updatable = false)
 	public String name;
@@ -43,16 +43,16 @@ public class Task {
 
 	}
 
-	public Task(Scenario scenario, String name) {
-		this.scenario = scenario;
+	public Task(Story story, String name) {
+		this.story = story;
 		this.name = name;
-		pk = new TaskPK(scenario.name, name);
-		this.scenario.tasks.add(this);
+		pk = new TaskPK(story.name, name);
+		this.story.tasks.add(this);
 	}
 
 	@Override
 	public int hashCode() {
-		return scenario.name.hashCode() * 31 + name.hashCode();
+		return story.name.hashCode() * 31 + name.hashCode();
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class Task {
 		}
 
 		if (name.equals(((Task) o).name)) {
-			if (scenario.name.equals(((Task) o).scenario.name)) {
+			if (story.name.equals(((Task) o).story.name)) {
 				return true;
 			}
 		}

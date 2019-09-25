@@ -5,13 +5,13 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class TaskPK {
 
-	public String scenario_name;
+	public String story_name;
 
 	public String task_name;
 
 	@Override
 	public int hashCode() {
-		return scenario_name.hashCode() * 31 + task_name.hashCode() * 7;
+		return story_name.hashCode() * 31 + task_name.hashCode() * 7;
 
 	}
 
@@ -21,15 +21,15 @@ public class TaskPK {
 			return false;
 		}
 
-		return scenario_name.equals(((TaskPK) o).scenario_name) && task_name.equals(((TaskPK) o).task_name);
+		return story_name.equals(((TaskPK) o).story_name) && task_name.equals(((TaskPK) o).task_name);
 	}
 
 	public TaskPK() {
 		
 	}
 	
-	public TaskPK(final String scenarioName, final String taskName) {
-		scenario_name = scenarioName;
+	public TaskPK(final String storyName, final String taskName) {
+		story_name = storyName;
 		task_name = taskName;
 	}
 
