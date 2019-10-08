@@ -1,6 +1,5 @@
 package eu.fays.rockbox.jpa;
 
-import javax.persistence.JoinColumn;
 import static javax.persistence.CascadeType.ALL;
 
 import java.time.LocalDateTime;
@@ -15,13 +14,12 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
-import org.eclipse.persistence.annotations.Converter;
 
 @Entity
 @Table(schema = "kanban", name = "story")
