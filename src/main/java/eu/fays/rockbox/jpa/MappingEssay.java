@@ -1,5 +1,6 @@
 package eu.fays.rockbox.jpa;
 
+import static eu.fays.rockbox.jpa.Tag.*;
 import static javax.persistence.Persistence.createEntityManagerFactory;
 
 import javax.persistence.EntityManager;
@@ -25,11 +26,20 @@ public class MappingEssay {
 			final Task task2 = new Task(story1, "task2");
 			new Subtask(task1, "subtask1.1");
 			new Subtask(task1, "subtask1.2");
-			new Subtask(task2, "subtask2.1");
+			final Subtask subtask = new Subtask(task2, "subtask2.1");
 			new Subtask(task2, "subtask2.2");
 			new Subtask(task2, "subtask2.3");
 			new Subtask(task2, "subtask2.4");
 			System.out.println(story1);
+			story1.tags.add(BUG_FIX);
+			story1.tags.add(FAST_TRACK);
+			story1.tags.add(QUICK_WIN);
+			story1.tags2.add(BUG_FIX);
+			story1.tags2.add(FAST_TRACK);
+			story1.tags2.add(QUICK_WIN);
+			subtask.todos.add("a");
+			subtask.todos.add("b");
+			subtask.todos.add("c");
 
 			em.getTransaction().begin();
 			em.persist(story1);

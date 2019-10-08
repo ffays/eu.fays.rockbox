@@ -1,6 +1,10 @@
 package eu.fays.rockbox.jpa;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -32,6 +36,10 @@ public class Subtask {
 
 	@Column(name = "description")
 	public String description;
+	
+	@Convert(converter = ListOfStringAdapter.class)
+	@Column(name = "todos")
+	public List<String> todos = new ArrayList<>();
 
 	public Subtask() {
 
