@@ -14,13 +14,13 @@ dependencies {
 	compile 'org.apache.commons:commons-lang3:3.7'
 	compile 'com.h2database:h2:1.4.199'
 
+	compile 'org.eclipse.persistence:javax.persistence:2.2.1'
 	// c.f. https://stackoverflow.com/questions/45870753/eclipselink-2-7-0-and-jpa-api-2-2-0-signature-mismatch
 	compile('org.eclipse.persistence:eclipselink:2.7.4') {
 		exclude module: 'jakarta.persistence'
 	}
 	
 	compile 'org.eclipse.persistence:org.eclipse.persistence.moxy:2.7.4'
-	compile 'org.eclipse.persistence:javax.persistence:2.2.1'
 }
 
 buildscript {
