@@ -18,16 +18,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+
 import eu.fays.rockbox.jpa.UUIDAdapter;
 
 @Entity
-@Table(schema = "foret")
+@Table(schema = "foret", name="arbre")
 public class Arbre {
 
 	@Column(name = "arbre_uuid", columnDefinition = "UUID")
 	@Convert(converter = UUIDAdapter.class)
 	@Id
-	UUID uuid = UUID.randomUUID();
+	UUID uuid = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate();
 
 	// @formatter:off
 	@ManyToOne
@@ -40,10 +43,10 @@ public class Arbre {
 	@Column(name = "arbre_name")
 	String name;
 
-	@Column
-	int index;
+	@Column(name = "ix")
+	int ix;
 
-	@Column
+	@Column(name = "epaiseur")
 	@Enumerated(EnumType.STRING)
 	Epaiseur epaiseur;
 
@@ -57,7 +60,7 @@ public class Arbre {
 		this.foret = foret;
 		this.name = name;
 		this.epaiseur = epaiseur;
-		this.index = foret.arbres.size();
+		this.ix = foret.arbres.size();
 		foret.arbres.add(this);
 	}
 

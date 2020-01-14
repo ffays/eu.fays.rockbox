@@ -13,16 +13,19 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+
 import eu.fays.rockbox.jpa.UUIDAdapter;
 
 @Entity
-@Table(schema = "foret")
+@Table(schema = "foret", name="branche")
 public class Branche {
 
 	@Column(name = "branche_uuid", columnDefinition = "UUID")
 	@Convert(converter = UUIDAdapter.class)
 	@Id
-	UUID uuid = UUID.randomUUID();
+	UUID uuid = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate();
 
 	// @formatter:off
 	@ManyToOne
@@ -32,10 +35,12 @@ public class Branche {
 	// @formatter:on
 	Arbre arbre;
 
+	@Column(name = "epaiseur")
 	@Enumerated(EnumType.STRING)
 	Epaiseur epaiseur;
 
-	int index;
+	@Column(name = "ix")
+	int ix;
 
 	public Branche() {
 
@@ -44,7 +49,7 @@ public class Branche {
 	public Branche(Arbre arbre, Epaiseur epaiseur) {
 		this.arbre = arbre;
 		this.epaiseur = epaiseur;
-		this.index = (int) arbre.branches.stream().filter(b -> b.epaiseur == epaiseur).count();
+		this.ix = (int) arbre.branches.stream().filter(b -> b.epaiseur == epaiseur).count();
 		arbre.branches.add(this);
 	}
 
@@ -70,6 +75,6 @@ public class Branche {
 
 	@Override
 	public String toString() {
-		return epaiseur + ":" + index;
+		return epaiseur + ":" + ix;
 	}
 }

@@ -17,5 +17,5 @@ target/
 /bin/
 /wishlist.xml
 /.DS_Store
-/kanban_create_tables.sql
-/kanban_drop_tables.sql
+/create_tables.sql
+/drop_tables.sql

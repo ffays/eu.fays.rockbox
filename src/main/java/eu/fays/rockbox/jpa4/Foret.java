@@ -13,16 +13,19 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+
 import eu.fays.rockbox.jpa.UUIDAdapter;
 
 @Entity
-@Table(schema = "foret")
+@Table(schema = "foret", name="foret")
 public class Foret {
 
 	@Column(name = "foret_uuid", columnDefinition = "UUID")
 	@Convert(converter = UUIDAdapter.class)
 	@Id
-	UUID uuid = UUID.randomUUID();
+	UUID uuid = Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate();
 
 	@Column(name = "foret_name")
 	String name;
