@@ -1,38 +1,43 @@
-package eu.fays.rockbox.jpa3;
+package eu.fays.rockbox.jpa4;
 
 import static javax.persistence.CascadeType.ALL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import eu.fays.rockbox.jpa.UUIDAdapter;
+
 @Entity
-@Table(schema = "forest")
-@IdClass(TreeId.class)
-public class Tree {
+@Table(schema = "foret")
+public class Arbre {
+
+	@Column(name = "arbre_uuid", columnDefinition = "UUID")
+	@Convert(converter = UUIDAdapter.class)
+	@Id
+	UUID uuid = UUID.randomUUID();
 
 	// @formatter:off
 	@ManyToOne
 	@JoinColumns({
-		@JoinColumn(name = "forest_name", referencedColumnName = "forest_name")
+		@JoinColumn(name = "foret_uuid", referencedColumnName = "foret_uuid")
 	})
-	@Id
 	// @formatter:on
-	Forest forest;
+	Foret foret;
 
-	@Id
-	@Column(name = "tree_name")
+	@Column(name = "arbre_name")
 	String name;
 
 	@Column
@@ -40,25 +45,25 @@ public class Tree {
 
 	@Column
 	@Enumerated(EnumType.STRING)
-	Tickness tickness;
+	Epaiseur epaiseur;
 
-	@OneToMany(mappedBy = "tree", cascade = ALL, orphanRemoval = true)
-	List<Branch> branches = new ArrayList<>();
+	@OneToMany(mappedBy = "arbre", cascade = ALL, orphanRemoval = true)
+	List<Branche> branches = new ArrayList<>();
 
-	public Tree() {
+	public Arbre() {
 	}
 
-	public Tree(Forest forest, String name, Tickness tickness) {
-		this.forest = forest;
+	public Arbre(Foret foret, String name, Epaiseur epaiseur) {
+		this.foret = foret;
 		this.name = name;
-		this.tickness = tickness;
-		this.index = forest.trees.size();
-		forest.trees.add(this);
+		this.epaiseur = epaiseur;
+		this.index = foret.arbres.size();
+		foret.arbres.add(this);
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode() + forest.hashCode() * 3;
+		return uuid.hashCode();
 	}
 
 	@Override
@@ -66,13 +71,10 @@ public class Tree {
 		if (o == null) {
 			return false;
 		}
-		if (!(o instanceof Tree)) {
+		if (!(o instanceof Arbre)) {
 			return false;
 		}
-		if (!name.equals(((Tree) o).name)) {
-			return false;
-		}
-		if (!forest.equals(((Tree) o).forest)) {
+		if (!uuid.equals(((Arbre) o).uuid)) {
 			return false;
 		}
 
