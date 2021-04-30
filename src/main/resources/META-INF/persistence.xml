@@ -5,8 +5,8 @@
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:;INIT=CREATE SCHEMA IF NOT EXISTS kanban"/>
-            <!-- <property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/homebrew.mxcl.h2;INIT=CREATE SCHEMA IF NOT EXISTS kanban"/> -->
+            <!-- <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:;INIT=CREATE SCHEMA IF NOT EXISTS kanban"/> -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/homebrew.mxcl.h2;INIT=CREATE SCHEMA IF NOT EXISTS kanban"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>	
             <property name="javax.persistence.jdbc.password" value="sa"/>
             <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
