@@ -17,6 +17,7 @@ import static java.text.DateFormat.getDateTimeInstance;
 import static org.apache.poi.ss.usermodel.CellType.FORMULA;
 import static org.apache.poi.ss.usermodel.CellType.NUMERIC;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -74,75 +75,29 @@ import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
 
 public class ExcelTooling {
-	/** Excel workbook */
-	private final XSSFWorkbook workbook;
-	/** Excel Data format */
-	private XSSFDataFormat dataFormat;
-	/** Excel Date cell style */
-	private XSSFCellStyle dateCellStyle;
-	/** Excel Timestamp cell style */
-	private XSSFCellStyle timestampCellStyle;
-	/** Excel creation helper */
-	private XSSFCreationHelper creationHelper;
-	/** Excel default indexed color map */
-	private DefaultIndexedColorMap defaultIndexedColorMap;
-	/** Excel bad cell style */
-	private XSSFCellStyle badCellStyle;
-	/** Excel good cell style */
-	private XSSFCellStyle goodCellStyle;
-	/** Excel neutral cell style */
-	private XSSFCellStyle neutralCellStyle;
-
-	/** Java custom Date format, used for conversions : dd MMM yyyy */
-	public static final String CUSTOM_JAVA_DATE_FORMAT = "dd MMM yyyy";
-	/** Java custom Time format */
-	public static final String CUSTOM_JAVA_TIME_FORMAT = "hh:mm:ss";
-	/** Java custom Timestamp format, used for conversions : dd MMM yyyy HH:mm:ss */
-	public static final String CUSTOM_JAVA_TIMESTAMP_FORMAT = CUSTOM_JAVA_DATE_FORMAT + " " + CUSTOM_JAVA_TIME_FORMAT;
-
-	/** Excel custom Date format : dd mmmm yyyy */
-	public static final String CUSTOM_EXCEL_DATE_FORMAT = CUSTOM_JAVA_DATE_FORMAT.toLowerCase();
-	/** Excel custom Time format : hh:mm:ss */
-	public static final String CUSTOM_EXCEL_TIME_FORMAT = CUSTOM_JAVA_TIME_FORMAT.toLowerCase();
-	/** Excel custom Timestamp format : dd mmm yyyy hh:mm:ss */
-	public static final String CUSTOM_EXCEL_TIMESTAMP_FORMAT = CUSTOM_EXCEL_DATE_FORMAT + " " + CUSTOM_EXCEL_TIME_FORMAT;
-
-	/** Custom "dd MMM yyyy"/"d MMM yyyy" Date parser */
-	// @formatter:off
-	public static final DateTimeFormatter CUSTOM_DATE_PARSER = new DateTimeFormatterBuilder()
-			.appendOptional(DateTimeFormatter.ofPattern(CUSTOM_JAVA_DATE_FORMAT))
-			.appendOptional(DateTimeFormatter.ofPattern((CUSTOM_JAVA_DATE_FORMAT.substring(1))))
-			.toFormatter();
-	// @formatter:on
 
 	/**
-	 * Custom timestamp parser, one of
-	 * <ul>
-	 * <li>dd MMM yyyy HH:mm:ss
-	 * <li>d MMM yyyy HH:mm:ss
-	 * <li>dd MMM yyyy H:mm:ss
-	 * <li>d MMM yyyy H:mm:ss
-	 * </ul>
+	 * Essay
+	 * @param args unused
+	 * @throws Exception in case of unexpected error
 	 */
-	// @formatter:off
-	public static final DateTimeFormatter CUSTOM_TIMESTAMP_PARSER = new DateTimeFormatterBuilder()
-			.appendOptional(DateTimeFormatter.ofPattern(CUSTOM_JAVA_TIMESTAMP_FORMAT))
-			.appendOptional(DateTimeFormatter.ofPattern(CUSTOM_JAVA_TIMESTAMP_FORMAT.substring(1)))
-			.appendOptional(DateTimeFormatter.ofPattern(CUSTOM_JAVA_DATE_FORMAT + " " + CUSTOM_JAVA_TIME_FORMAT.substring(1)))
-			.appendOptional(DateTimeFormatter.ofPattern(CUSTOM_JAVA_DATE_FORMAT.substring(1) + " " + CUSTOM_JAVA_TIME_FORMAT.substring(1)))
-			.toFormatter();
-	// @formatter:on
-
-	/**
-	 * Excel format accept to escape the semicolon with a backslash,<br>
-	 * however in such case, Apache POI does not format the timestamp correctly, i.e. it does output the backslash
-	 */
-	private static final Pattern TIMESTAMP_FORMAT_WITH_COLON_ESCAPED_PATTERN = Pattern.compile("(\\d?\\d)\\\\:(\\d{2})\\\\:(\\d{2})$");
-
-	/** Default date format used for conversions, c.f. {@link DateFormat#getDateInstance(int, Locale)} with {@link DateFormat#SHORT} and {@link Locale#getDefault()} */
-	public static final DateFormat DEFAULT_DATE_DATEFORMAT = getDateInstance(SHORT, Locale.getDefault());
-	/** Default time format used for conversions, c.f. {@link DateFormat#getDateTimeInstance(int, int, Locale)} with {@link DateFormat#SHORT} twice and {@link Locale#getDefault()} */
-	public static final DateFormat DEFAULT_TIMESTAMP_DATEFORMAT = getDateTimeInstance(SHORT, SHORT, Locale.getDefault());
+	public static void main(String[] args) throws Exception {
+		final File target = File.createTempFile(ExcelEssay.class.getSimpleName(), ".xlsx");
+		try (final XSSFWorkbook workbook = new XSSFWorkbook();
+				final FileOutputStream out = new FileOutputStream(target)) {
+			final XSSFSheet sheet = workbook.createSheet();
+			final ExcelTooling tooling = new ExcelTooling(workbook);
+			int r = 0;
+			for (final ExcelCellStyle excelCellStyle : ExcelCellStyle.values()) {
+				final Row row = sheet.createRow(r++);
+				final Cell cell = row.createCell(0);
+				tooling.setCellStyle(cell, excelCellStyle);
+				cell.setCellValue(excelCellStyle.name());
+			}
+			workbook.write(out);
+		}
+		Desktop.getDesktop().open(target);
+	}
 
 	/**
 	 * Constructor
@@ -251,7 +206,7 @@ public class ExcelTooling {
 	 * @return the good cell style
 	 */
 	private XSSFCellStyle getGoodCellStyle() {
-		if (badCellStyle == null) {
+		if (goodCellStyle == null) {
 			// lazy init
 			final XSSFColor goodFontColor = new XSSFColor(GOOD.fontRGB, getDefaultIndexedColorMap());
 			final XSSFColor goodForegroundColor = new XSSFColor(GOOD.foregroundRGB, getDefaultIndexedColorMap());
@@ -317,7 +272,7 @@ public class ExcelTooling {
 	 * @param cell the cell
 	 * @param excelCellStyle the cell style
 	 */
-	public void setCellStyle(final XSSFCell cell, final ExcelCellStyle excelCellStyle) {
+	public void setCellStyle(final Cell cell, final ExcelCellStyle excelCellStyle) {
 		//
 		assert cell != null;
 		assert excelCellStyle != null;
@@ -659,4 +614,75 @@ public class ExcelTooling {
 
 		return result;
 	}
+
+	/** Excel workbook */
+	private final XSSFWorkbook workbook;
+	/** Excel Data format */
+	private XSSFDataFormat dataFormat;
+	/** Excel Date cell style */
+	private XSSFCellStyle dateCellStyle;
+	/** Excel Timestamp cell style */
+	private XSSFCellStyle timestampCellStyle;
+	/** Excel creation helper */
+	private XSSFCreationHelper creationHelper;
+	/** Excel default indexed color map */
+	private DefaultIndexedColorMap defaultIndexedColorMap;
+	/** Excel bad cell style */
+	private XSSFCellStyle badCellStyle;
+	/** Excel good cell style */
+	private XSSFCellStyle goodCellStyle;
+	/** Excel neutral cell style */
+	private XSSFCellStyle neutralCellStyle;
+
+	/** Java custom Date format, used for conversions : dd MMM yyyy */
+	public static final String CUSTOM_JAVA_DATE_FORMAT = "dd MMM yyyy";
+	/** Java custom Time format */
+	public static final String CUSTOM_JAVA_TIME_FORMAT = "hh:mm:ss";
+	/** Java custom Timestamp format, used for conversions : dd MMM yyyy HH:mm:ss */
+	public static final String CUSTOM_JAVA_TIMESTAMP_FORMAT = CUSTOM_JAVA_DATE_FORMAT + " " + CUSTOM_JAVA_TIME_FORMAT;
+
+	/** Excel custom Date format : dd mmmm yyyy */
+	public static final String CUSTOM_EXCEL_DATE_FORMAT = CUSTOM_JAVA_DATE_FORMAT.toLowerCase();
+	/** Excel custom Time format : hh:mm:ss */
+	public static final String CUSTOM_EXCEL_TIME_FORMAT = CUSTOM_JAVA_TIME_FORMAT.toLowerCase();
+	/** Excel custom Timestamp format : dd mmm yyyy hh:mm:ss */
+	public static final String CUSTOM_EXCEL_TIMESTAMP_FORMAT = CUSTOM_EXCEL_DATE_FORMAT + " " + CUSTOM_EXCEL_TIME_FORMAT;
+
+	/** Custom "dd MMM yyyy"/"d MMM yyyy" Date parser */
+	// @formatter:off
+	public static final DateTimeFormatter CUSTOM_DATE_PARSER = new DateTimeFormatterBuilder()
+			.appendOptional(DateTimeFormatter.ofPattern(CUSTOM_JAVA_DATE_FORMAT))
+			.appendOptional(DateTimeFormatter.ofPattern((CUSTOM_JAVA_DATE_FORMAT.substring(1))))
+			.toFormatter();
+	// @formatter:on
+
+	/**
+	 * Custom timestamp parser, one of
+	 * <ul>
+	 * <li>dd MMM yyyy HH:mm:ss
+	 * <li>d MMM yyyy HH:mm:ss
+	 * <li>dd MMM yyyy H:mm:ss
+	 * <li>d MMM yyyy H:mm:ss
+	 * </ul>
+	 */
+	// @formatter:off
+	public static final DateTimeFormatter CUSTOM_TIMESTAMP_PARSER = new DateTimeFormatterBuilder()
+			.appendOptional(DateTimeFormatter.ofPattern(CUSTOM_JAVA_TIMESTAMP_FORMAT))
+			.appendOptional(DateTimeFormatter.ofPattern(CUSTOM_JAVA_TIMESTAMP_FORMAT.substring(1)))
+			.appendOptional(DateTimeFormatter.ofPattern(CUSTOM_JAVA_DATE_FORMAT + " " + CUSTOM_JAVA_TIME_FORMAT.substring(1)))
+			.appendOptional(DateTimeFormatter.ofPattern(CUSTOM_JAVA_DATE_FORMAT.substring(1) + " " + CUSTOM_JAVA_TIME_FORMAT.substring(1)))
+			.toFormatter();
+	// @formatter:on
+
+	/**
+	 * Excel format accept to escape the semicolon with a backslash,<br>
+	 * however in such case, Apache POI does not format the timestamp correctly, i.e. it does output the backslash
+	 */
+	private static final Pattern TIMESTAMP_FORMAT_WITH_COLON_ESCAPED_PATTERN = Pattern.compile("(\\d?\\d)\\\\:(\\d{2})\\\\:(\\d{2})$");
+
+	/** Default date format used for conversions, c.f. {@link DateFormat#getDateInstance(int, Locale)} with {@link DateFormat#SHORT} and {@link Locale#getDefault()} */
+	public static final DateFormat DEFAULT_DATE_DATEFORMAT = getDateInstance(SHORT, Locale.getDefault());
+	/** Default time format used for conversions, c.f. {@link DateFormat#getDateTimeInstance(int, int, Locale)} with {@link DateFormat#SHORT} twice and {@link Locale#getDefault()} */
+	public static final DateFormat DEFAULT_TIMESTAMP_DATEFORMAT = getDateTimeInstance(SHORT, SHORT, Locale.getDefault());
+
 }
