@@ -19,15 +19,13 @@ dependencies {
 	implementation 'org.apache.poi:poi-scratchpad:5.0.0'	
 	implementation 'org.apache.commons:commons-lang3:3.12'
 	implementation 'com.h2database:h2:1.4.200'
-	implementation('net.sourceforge.htmlunit:htmlunit:2.49.1') {
-		exclude module: 'xml-apis'
-	}
-
+	implementation('net.sourceforge.htmlunit:htmlunit:2.49.1') { exclude module: 'xml-apis' }
+	implementation('org.apache.poi:poi-ooxml:5.0.0') { exclude module: 'xml-apis' } 
 	implementation 'org.eclipse.persistence:javax.persistence:2.2.1'
 	// c.f. https://stackoverflow.com/questions/45870753/eclipselink-2-7-0-and-jpa-api-2-2-0-signature-mismatch
-	implementation('org.eclipse.persistence:eclipselink:3.0.1') {
-		exclude module: 'jakarta.persistence'
-	}
+	implementation('org.eclipse.persistence:eclipselink:3.0.1') { exclude module: 'jakarta.persistence' }
+	implementation 'com.opencsv:opencsv:5.4'
+
 	
 	implementation 'org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.1'
 }
