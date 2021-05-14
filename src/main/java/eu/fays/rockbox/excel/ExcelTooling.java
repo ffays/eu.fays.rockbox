@@ -312,7 +312,7 @@ public class ExcelTooling {
 	}
 
 	/**
-	 * Paint the cell as either "Bad" or "Neutral"
+	 * Format the cell as one of "Bad", "Good" or "Neutral" style
 	 * 
 	 * @param cell the cell
 	 * @param excelCellStyle the cell style
