@@ -82,7 +82,7 @@ public class ExcelTooling {
 	 * @throws Exception in case of unexpected error
 	 */
 	public static void main(String[] args) throws Exception {
-		final File target = File.createTempFile(ExcelEssay.class.getSimpleName(), ".xlsx");
+		final File target = File.createTempFile(ExcelTooling.class.getSimpleName(), ".xlsx");
 		try (final XSSFWorkbook workbook = new XSSFWorkbook();
 				final FileOutputStream out = new FileOutputStream(target)) {
 			final XSSFSheet sheet = workbook.createSheet();
