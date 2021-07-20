@@ -26,7 +26,9 @@ dependencies {
 	// c.f. https://stackoverflow.com/questions/45870753/eclipselink-2-7-0-and-jpa-api-2-2-0-signature-mismatch
 	implementation('org.eclipse.persistence:eclipselink:3.0.1') { exclude module: 'jakarta.persistence' }
 	implementation 'com.opencsv:opencsv:5.4'
-
+	implementation 'org.xhtmlrenderer:flying-saucer-core:9.1.22'
+	implementation 'org.xhtmlrenderer:flying-saucer-pdf:9.1.22'
+	implementation 'org.rendersnake:rendersnake:1.9.0'
 	
 	implementation 'org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.1'
 }
