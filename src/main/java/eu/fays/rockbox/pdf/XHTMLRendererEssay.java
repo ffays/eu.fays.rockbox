@@ -14,7 +14,7 @@ public class XHTMLRendererEssay {
 		final int cN = 15;
 		final double randMax = 100_000d;
 		final File file = File.createTempFile(XHTMLRendererEssay.class.getSimpleName(), ".pdf");
-		try (final FileOutputStream stream = new FileOutputStream(file)) {
+		try (final FileOutputStream fos = new FileOutputStream(file)) {
 			final HtmlCanvas html = new HtmlCanvas();
 			final HtmlAttributes style1 = html.attributes().style("border: 1px solid black;border-collapse: collapse");
 			final HtmlAttributes style2 = html.attributes().style("border: 1px solid black;border-collapse: collapse; text-align: center");
@@ -45,7 +45,7 @@ public class XHTMLRendererEssay {
 			final ITextRenderer renderer = new ITextRenderer();
 			renderer.setDocumentFromString(html.toHtml());
 			renderer.layout();
-			renderer.createPDF(stream);
+			renderer.createPDF(fos);
 		}
 
 		Desktop.getDesktop().open(file);
