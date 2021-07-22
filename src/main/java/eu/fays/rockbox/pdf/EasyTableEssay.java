@@ -1,11 +1,9 @@
 package eu.fays.rockbox.pdf;
 
 import static java.awt.Color.BLACK;
-import static java.awt.Color.WHITE;
 import static org.apache.pdfbox.pdmodel.common.PDRectangle.A4;
-import static org.vandeseer.easytable.settings.HorizontalAlignment.RIGHT;
 import static org.apache.pdfbox.pdmodel.font.PDType1Font.HELVETICA;
-
+import static org.vandeseer.easytable.settings.HorizontalAlignment.RIGHT;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -40,8 +38,8 @@ public class EasyTableEssay {
 				for(int c = 0; c<cN; c++) {
 					tableBuilder
 						.addColumnOfWidth(38f)
-		                .fontSize(8)
-		                .font(HELVETICA);
+						.fontSize(8)
+						.font(HELVETICA);
 				}
 				
 				// Header
@@ -50,12 +48,11 @@ public class EasyTableEssay {
 					for(int c = 0; c<cN; c++) {
 						final TextCellBuilder<?, ?> textCellBuilder = TextCell.builder();
 						final String text = Character.toString(65+c);
-						textCellBuilder.text(text).borderWidth(1).borderColorLeft(BLACK).backgroundColor(WHITE);
+						textCellBuilder.text(text).borderWidth(1).borderColorLeft(BLACK);
 						rowBuilder.add(textCellBuilder.build());
 					}
 					tableBuilder.addRow(rowBuilder.build());
 				}
-				
 
 				// Data
 				for(int r = 0; r<rN; r++) {
@@ -63,7 +60,7 @@ public class EasyTableEssay {
 					for(int c = 0; c<cN; c++) {
 						final String text = Integer.toString((int)(Math.random()*randMax));
 						final TextCellBuilder<?, ?> textCellBuilder = TextCell.builder();
-						textCellBuilder.text(text).borderWidth(1).borderColorLeft(BLACK).backgroundColor(WHITE).horizontalAlignment(RIGHT);
+						textCellBuilder.text(text).borderWidth(1).borderColorLeft(BLACK).horizontalAlignment(RIGHT);
 						rowBuilder.add(textCellBuilder.build());
 					}
 					tableBuilder.addRow(rowBuilder.build());
@@ -80,7 +77,6 @@ public class EasyTableEssay {
 					.table(table)
 					.build();
 
-				// And go for it!
 				tableDrawer.draw();
 			}
 
@@ -90,6 +86,5 @@ public class EasyTableEssay {
 		}
 
 		Desktop.getDesktop().open(file);
-
 	}
 }
