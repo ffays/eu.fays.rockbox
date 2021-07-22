@@ -1,4 +1,4 @@
-package eu.fays.rockbox.xhtmlrenderer;
+package eu.fays.rockbox.pdf;
 
 import java.awt.Desktop;
 import java.io.File;
