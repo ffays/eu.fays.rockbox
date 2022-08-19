@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.toMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class XStringMapAdapter extends XmlAdapter<XStringEntry[], Map<String, String>> {
 	public XStringEntry[] marshal(final Map<String, String> map) throws Exception {

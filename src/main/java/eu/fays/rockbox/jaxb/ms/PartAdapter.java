@@ -1,6 +1,6 @@
 package eu.fays.rockbox.jaxb.ms;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Article: <a href="http://stackoverflow.com/questions/10150263/jaxb-annotations-how-do-i-make-a-list-of-xmlidref-elements-have-the-id-value-a">JAXB Annotations - How do I make a list of XmlIDRef elements have the id

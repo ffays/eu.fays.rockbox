@@ -1,6 +1,6 @@
 package eu.fays.rockbox.jaxb.ms.minimified;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class PartAdapter extends XmlAdapter<PartRef, Part> {
 	@Override

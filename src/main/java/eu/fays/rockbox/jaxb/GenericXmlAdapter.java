@@ -1,6 +1,6 @@
 package eu.fays.rockbox.jaxb;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Generic XML Adapter
@@ -27,7 +27,7 @@ public abstract class GenericXmlAdapter<T> extends XmlAdapter<T, T> {
 	}
 
 	/**
-	 * @see javax.xml.bind.annotation.adapters.XmlAdapter#marshal(java.lang.Object)
+	 * @see jakarta.xml.bind.annotation.adapters.XmlAdapter#marshal(java.lang.Object)
 	 */
 	@Override
 	public T marshal(final T v) throws Exception {
@@ -38,7 +38,7 @@ public abstract class GenericXmlAdapter<T> extends XmlAdapter<T, T> {
 	}
 
 	/**
-	 * @see javax.xml.bind.annotation.adapters.XmlAdapter#unmarshal(java.lang.Object)
+	 * @see jakarta.xml.bind.annotation.adapters.XmlAdapter#unmarshal(java.lang.Object)
 	 */
 	@Override
 	public T unmarshal(final T v) throws Exception {

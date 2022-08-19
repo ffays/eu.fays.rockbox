@@ -1,7 +1,7 @@
 package eu.fays.rockbox.jpa;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 /**
  * Adapter to convert {@link Double#NaN} (Java) to NULL (Database) back and forth.
@@ -10,7 +10,7 @@ import javax.persistence.Converter;
 public class DoubleAdapter implements AttributeConverter<Double, Double> {
 
 	/**
-	 * @see javax.persistence.AttributeConverter#convertToDatabaseColumn(java.lang.Object)
+	 * @see jakarta.persistence.AttributeConverter#convertToDatabaseColumn(java.lang.Object)
 	 */
 	@Override
 	public Double convertToDatabaseColumn(final Double d) {
@@ -21,7 +21,7 @@ public class DoubleAdapter implements AttributeConverter<Double, Double> {
 	}
 
 	/**
-	 * @see javax.persistence.AttributeConverter#convertToEntityAttribute(java.lang.Object)
+	 * @see jakarta.persistence.AttributeConverter#convertToEntityAttribute(java.lang.Object)
 	 */
 	@Override
 	public Double convertToEntityAttribute(final Double d) {

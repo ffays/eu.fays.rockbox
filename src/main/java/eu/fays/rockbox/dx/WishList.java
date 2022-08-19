@@ -2,7 +2,7 @@ package eu.fays.rockbox.dx;
 
 import static java.lang.Boolean.TRUE;
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
-import static javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
+import static jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
 
 import java.io.File;
 import java.util.List;

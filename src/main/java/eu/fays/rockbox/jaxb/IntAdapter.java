@@ -1,6 +1,6 @@
 package eu.fays.rockbox.jaxb;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class IntAdapter extends XmlAdapter<Integer, Integer> {
 

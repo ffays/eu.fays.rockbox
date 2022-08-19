@@ -2,7 +2,7 @@ package eu.fays.rockbox.jaxb.mapofmap2;
 
 import java.util.Map;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class DictionariesAdapter extends XmlAdapter<Dictionary[], Map<String, Map<String, Object>>> {
 

@@ -3,10 +3,10 @@ package eu.fays.rockbox.jpa4;
 import static eu.fays.rockbox.jpa4.Epaiseur.FIN;
 import static eu.fays.rockbox.jpa4.Epaiseur.LARGE;
 import static eu.fays.rockbox.jpa4.Epaiseur.NORMAL;
-import static javax.persistence.Persistence.createEntityManagerFactory;
+import static jakarta.persistence.Persistence.createEntityManagerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 // https://github.com/ancoron/pg-inet-maven/blob/master/org.ancoron.postgresql.jpa/src/main/java/org/ancoron/postgresql/jpa/eclipselink/InetAddressConverter.java
 public class MappingEssay4 {

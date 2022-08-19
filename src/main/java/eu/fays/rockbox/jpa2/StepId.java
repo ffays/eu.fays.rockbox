@@ -1,6 +1,6 @@
 package eu.fays.rockbox.jpa2;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class StepId {

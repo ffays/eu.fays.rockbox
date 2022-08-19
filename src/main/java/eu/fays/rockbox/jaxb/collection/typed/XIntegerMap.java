@@ -2,8 +2,8 @@ package eu.fays.rockbox.jaxb.collection.typed;
 
 import java.util.LinkedHashMap;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 
 
 @SuppressWarnings("serial")

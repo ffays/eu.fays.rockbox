@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import eu.fays.rockbox.jaxb.Fruit;
 

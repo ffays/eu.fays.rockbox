@@ -1,10 +1,10 @@
 package eu.fays.rockbox.jpa;
 
 import static eu.fays.rockbox.jpa.Tag.*;
-import static javax.persistence.Persistence.createEntityManagerFactory;
+import static jakarta.persistence.Persistence.createEntityManagerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 public class MappingEssay {
 	public static void main(String[] args) throws Exception {

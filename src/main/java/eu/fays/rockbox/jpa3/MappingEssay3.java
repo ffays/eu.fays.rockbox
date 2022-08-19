@@ -3,11 +3,11 @@ package eu.fays.rockbox.jpa3;
 import static eu.fays.rockbox.jpa3.Tickness.LARGE;
 import static eu.fays.rockbox.jpa3.Tickness.MEDIUM;
 import static eu.fays.rockbox.jpa3.Tickness.SMALL;
-import static javax.persistence.Persistence.createEntityManagerFactory;
+import static jakarta.persistence.Persistence.createEntityManagerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Query;
 
 public class MappingEssay3 {
 

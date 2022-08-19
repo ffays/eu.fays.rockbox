@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.toMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class XIntegerMapAdapter extends XmlAdapter<XIntegerEntry[], Map<String, Integer>> {
 	public XIntegerEntry[] marshal(final Map<String, Integer> map) throws Exception {

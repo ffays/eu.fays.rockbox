@@ -3,8 +3,8 @@ package eu.fays.rockbox.jpa;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 /**
  * Adapter to convert a list of {@link Tag} into a single String where all list elements have been concatenated with pipe "|" sign.
@@ -13,7 +13,7 @@ import javax.persistence.Converter;
 public class ListOfTagAdapter implements AttributeConverter<List<Tag>, String> {
 
 	/**
-	 * @see javax.persistence.AttributeConverter#convertToDatabaseColumn(java.lang.Object)
+	 * @see jakarta.persistence.AttributeConverter#convertToDatabaseColumn(java.lang.Object)
 	 */
 	@Override
 	public String convertToDatabaseColumn(final List<Tag> list) {
@@ -36,7 +36,7 @@ public class ListOfTagAdapter implements AttributeConverter<List<Tag>, String> {
 	}
 
 	/**
-	 * @see javax.persistence.AttributeConverter#convertToEntityAttribute(java.lang.Object)
+	 * @see jakarta.persistence.AttributeConverter#convertToEntityAttribute(java.lang.Object)
 	 */
 	@Override
 	public List<Tag> convertToEntityAttribute(final String value) {

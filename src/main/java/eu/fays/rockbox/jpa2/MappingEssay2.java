@@ -1,8 +1,8 @@
 package eu.fays.rockbox.jpa2;
 
-import static javax.persistence.Persistence.createEntityManagerFactory;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import static jakarta.persistence.Persistence.createEntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 public class MappingEssay2 {
 	public static void main(String[] args) throws Exception {

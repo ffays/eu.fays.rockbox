@@ -1,6 +1,6 @@
 package eu.fays.rockbox.jpa;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class TaskPK {
