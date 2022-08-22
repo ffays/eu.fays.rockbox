@@ -2,12 +2,18 @@ package eu.fays.rockbox.jpa;
 
 import static java.lang.System.getProperty;
 import static java.sql.DriverManager.getConnection;
+import static java.sql.Types.TIMESTAMP;
+import static java.sql.Types.VARCHAR;
+import static java.text.MessageFormat.format;
+import static java.time.LocalDateTime.now;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,19 +41,30 @@ public class RowSetListenerEssay extends Thread implements UncaughtExceptionHand
 	private final String jdbcUrl;
 	private final String user;
 	private final String password;
-	private final String sql;
+	private final String mode;
+	private final UUID uuid;
 
+	private static final String LISTEN = "listen";
+	private static final String PULL = "pull";
+	private static final String SELECT_FROM_LOCKS_SQL = "SELECT lock_timestamp, lock_owner FROM locks WHERE uuid = ?";
+	private static final String INSERT_INTO_LOCKS_SQL = "INSERT INTO locks (uuid) VALUES (?)";
+	private static final String UPDATE_LOCKS_SQL = "UPDATE locks SET lock_timestamp = ?, lock_owner = ? WHERE uuid = ?";
 	/**
 	 * VM Args
 	 * 
 	 * Listen:
 	 * <pre>
-	 * -Dmode="listen" -ea -Djava.util.logging.SimpleFormatter.format="%1$tF %1$tT	%4$s	%3$s	%5$s%6$s%n"
+	 * -Dmode="listen" -Duuid="3286502f-67b7-4a81-98cc-433fedbc61db" -ea -Djava.util.logging.SimpleFormatter.format="%1$tF %1$tT	%4$s	%3$s	%5$s%6$s%n"
+	 * </pre>
+	 * 
+	 * Pull
+	 * <pre>
+	 * -Dmode="pull" -Duuid="3286502f-67b7-4a81-98cc-433fedbc61db" -ea -Djava.util.logging.SimpleFormatter.format="%1$tF %1$tT	%4$s	%3$s	%5$s%6$s%n"
 	 * </pre>
 	 * 
 	 * Emit:
 	 * <pre>
-	 * -Dmode="emit" -ea -Djava.util.logging.SimpleFormatter.format="%1$tF %1$tT	%4$s	%3$s	%5$s%6$s%n"
+	 * -Dmode="emit" -Duuid="3286502f-67b7-4a81-98cc-433fedbc61db" -ea -Djava.util.logging.SimpleFormatter.format="%1$tF %1$tT	%4$s	%3$s	%5$s%6$s%n"
 	 * </pre>
 	 * 
 	 * @param args unused
@@ -66,59 +83,103 @@ public class RowSetListenerEssay extends Thread implements UncaughtExceptionHand
 		final String user = getProperty("user", "sa");
 		final String password = getProperty("password", "sa");
 		// "locks" table: CREATE TABLE locks (uuid UUID NOT NULL, lock_timestamp TIMESTAMP, lock_owner VARCHAR(64))
-		final String sql = "SELECT * FROM locks";
-		final String mode = System.getProperty("mode", "listen");
-
-		final UUID uuid = UUID.randomUUID();
+		final String mode = System.getProperty("mode", LISTEN);
+		final UUID uuid = System.getProperty("uuid") != null ? UUID.fromString(System.getProperty("uuid")) : UUID.randomUUID();
 
 		try (final Connection connection = getConnection(jdbcUrl, user, password)) {
-				try (final Statement statement = connection.createStatement()) {
-					statement.execute("CREATE TABLE IF NOT EXISTS locks (uuid UUID NOT NULL, lock_timestamp TIMESTAMP, lock_owner VARCHAR(64))");
+			try (final Statement statement = connection.createStatement()) {
+				statement.execute("CREATE TABLE IF NOT EXISTS locks (uuid UUID NOT NULL, lock_timestamp TIMESTAMP, lock_owner VARCHAR(64))");
+			}
+			
+			try (final PreparedStatement selectPrepareStatement = connection.prepareStatement(SELECT_FROM_LOCKS_SQL)) {
+				selectPrepareStatement.setObject(1, uuid);
+				boolean found = false;
+				try(final ResultSet resultSet = selectPrepareStatement.executeQuery()) {
+					if(resultSet.next()) {
+						found = true;
+					}
 				}
-				
-				try (final PreparedStatement prepareStatement = connection.prepareStatement("INSERT INTO locks (uuid) VALUES (?)")) {
-					prepareStatement.setObject(1, uuid);
-					prepareStatement.execute();
+				if(found) {
+					// unlock
+					try (final PreparedStatement updatePrepareStatement = connection.prepareStatement(UPDATE_LOCKS_SQL)) {
+						updatePrepareStatement.setNull(1, TIMESTAMP);
+						updatePrepareStatement.setNull(2, VARCHAR);
+						updatePrepareStatement.setObject(3, uuid);
+						updatePrepareStatement.execute();
+					}
+				} else {
+					try (final PreparedStatement insertPrepareStatement = connection.prepareStatement(INSERT_INTO_LOCKS_SQL)) {
+						insertPrepareStatement.setObject(1, uuid);
+						insertPrepareStatement.execute();
+					}
 				}
 				connection.commit();
+
+			}
 		}
 
-		LOGGER.info(mode);
-		if("listen".equals(mode)) {
-			final RowSetListenerEssay rowSetListener = new RowSetListenerEssay(jdbcUrl, user, password, sql);
+		LOGGER.info(format("{0}\t{1}", mode, uuid));
+		if(LISTEN.equals(mode) || PULL.equals(mode)) {
+			final RowSetListenerEssay rowSetListener = new RowSetListenerEssay(jdbcUrl, user, password, mode, uuid);
 			rowSetListener.start();
 		} else {
-			try (final Connection connection = getConnection(jdbcUrl, user, password); final PreparedStatement prepareStatement = connection.prepareStatement("UPDATE locks SET lock_timestamp = CURRENT_TIMESTAMP, lock_owner = ? WHERE uuid = ?")) {
-				prepareStatement.setString(1, System.getProperty("user.name"));
-				prepareStatement.setObject(2, uuid);
-				prepareStatement.execute();
-				connection.commit();
+			try (final Connection connection = getConnection(jdbcUrl, user, password)) {
+				try (final PreparedStatement updatePrepareStatement = connection.prepareStatement(UPDATE_LOCKS_SQL)) {
+					updatePrepareStatement.setTimestamp(1, Timestamp.valueOf(now()));
+					updatePrepareStatement.setString(2, System.getProperty("user.name"));
+					updatePrepareStatement.setObject(3, uuid);
+					updatePrepareStatement.execute();
+					connection.commit();
+				}
 			}
 		}
 	}
 
-	public RowSetListenerEssay(final String jdbcUrl, final String user, final String password, final String sql) {
+	public RowSetListenerEssay(final String jdbcUrl, final String user, final String password, final String mode, final UUID uuid) {
 		setName(getClass().getSimpleName());
 		setUncaughtExceptionHandler(this);
 		this.jdbcUrl = jdbcUrl;
 		this.user = user;
 		this.password = password;
-		this.sql = sql;
+		this.mode = mode;
+		this.uuid = uuid;
 	}
 
 	public void run() {
 		try {
-			final RowSetFactory rowSetFactory = RowSetProvider.newFactory();
-			try (final JdbcRowSet jdbcRowSet = rowSetFactory.createJdbcRowSet()) {
-				jdbcRowSet.setUrl(jdbcUrl);
-				jdbcRowSet.setUsername(user);
-				jdbcRowSet.setPassword(password);
-				jdbcRowSet.setCommand(sql);
-				jdbcRowSet.addRowSetListener(this);
-				do {
-					jdbcRowSet.execute();
-					sleep(100L);
-				} while (!isInterrupted());
+			if(LISTEN.equals(mode)) {
+				final RowSetFactory rowSetFactory = RowSetProvider.newFactory();
+				try (final JdbcRowSet jdbcRowSet = rowSetFactory.createJdbcRowSet()) {
+					jdbcRowSet.setUrl(jdbcUrl);
+					jdbcRowSet.setUsername(user);
+					jdbcRowSet.setPassword(password);
+					jdbcRowSet.setCommand(SELECT_FROM_LOCKS_SQL.replace("?", "'" + uuid.toString() + "'"));
+					jdbcRowSet.addRowSetListener(this);
+					do {
+						jdbcRowSet.execute();
+						sleep(100L);
+					} while (!isInterrupted());
+				}
+			} else {
+				try (final Connection connection = getConnection(jdbcUrl, user, password)) {
+					try (final PreparedStatement selectPrepareStatement = connection.prepareStatement(SELECT_FROM_LOCKS_SQL)) {
+						selectPrepareStatement.setObject(1, uuid);
+						boolean locked = false;
+						do {
+							try(final ResultSet resultSet = selectPrepareStatement.executeQuery()) {
+								if(resultSet.next()) {
+									final Timestamp lockTimestamp = resultSet.getTimestamp(1);
+									final String lockOwner = resultSet.getString(2);
+									if(lockTimestamp != null) {
+										LOGGER.info(format("LOCKED {0}\t{1,date,yyyy-mm-dd HH:mm:ss}\t{2}", uuid, lockTimestamp, lockOwner));
+										locked = true;
+									}
+								}
+							}
+							sleep(100L);
+						} while (!isInterrupted() && !locked);
+					}
+				}
 			}
 		} catch (final InterruptedException e) {
 			// Do nothing
