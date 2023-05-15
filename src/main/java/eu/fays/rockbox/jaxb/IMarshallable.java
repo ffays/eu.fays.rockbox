@@ -1,21 +1,23 @@
 package eu.fays.rockbox.jaxb;
 
-import static java.lang.Boolean.TRUE;
-import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 import static jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
 import static jakarta.xml.bind.Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION;
+import static java.lang.Boolean.TRUE;
+import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 
 import java.io.File;
+
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
+import org.xml.sax.SAXException;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.util.ValidationEventCollector;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
-import org.xml.sax.SAXException;
 
 public interface IMarshallable<T> {
 
@@ -30,7 +32,7 @@ public interface IMarshallable<T> {
 		assert outputFile != null;
 		//
 
-		final JAXBContext context = JAXBContext.newInstance(getClass());
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { getClass() }, null);
 		final Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
 		if (schemaFile != null) {
@@ -57,7 +59,7 @@ public interface IMarshallable<T> {
 		assert schemaFile.canRead();
 		//
 
-		final JAXBContext context = JAXBContext.newInstance(MyData.class);
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { getClass() }, null);
 		final SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
 		final Unmarshaller unmarshaller = context.createUnmarshaller();
 		if (schemaFile != null) {

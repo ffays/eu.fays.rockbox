@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -120,7 +122,7 @@ public class Document {
 			this.dictionaries = dictionaries;
 		}
 		
-		final JAXBContext context = JAXBContext.newInstance(getClass());
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { getClass() }, null);
 		final Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
 		marshaller.marshal(this, out);

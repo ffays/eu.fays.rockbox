@@ -7,6 +7,8 @@ import static jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
 import java.io.File;
 import java.util.Map;
 
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -41,7 +43,8 @@ public class XMap {
 		assert file != null;
 		//
 
-		final JAXBContext context = JAXBContext.newInstance(getClass());
+		
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { getClass() }, null);
 		final Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
 		marshaller.marshal(this, file);

@@ -1,14 +1,20 @@
 package eu.fays.rockbox.jaxb.ms;
 
+import static jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
 import static java.lang.Boolean.TRUE;
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
-import static jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
 
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
+import org.xml.sax.SAXException;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -21,10 +27,6 @@ import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.util.ValidationEventCollector;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
-import org.xml.sax.SAXException;
 
 @XmlRootElement(name = "root")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -84,7 +86,7 @@ public class Root {
 		assert outputFile != null;
 		//
 
-		final JAXBContext context = JAXBContext.newInstance(getClass());
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { getClass() }, null);
 		final Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
 		// marshaller.setProperty(JAXB_NO_NAMESPACE_SCHEMA_LOCATION, "../" + XML_SCHEMA_FILE.getPath().replace(System.getProperty("file.separator"), "/"));
@@ -105,7 +107,7 @@ public class Root {
 		assert file.canRead();
 		//
 
-		final JAXBContext context = JAXBContext.newInstance(Root.class);
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { Root.class }, null);
 		final SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
 		final Schema schema = factory.newSchema(XML_SCHEMA_FILE);
 

@@ -1,11 +1,14 @@
 package eu.fays.rockbox.jaxb.collection.typed;
 
-import static java.lang.Boolean.TRUE;
 import static jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
+import static java.lang.Boolean.TRUE;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
+import org.xml.sax.SAXException;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -18,8 +21,6 @@ import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.xml.sax.SAXException;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "Root")
@@ -53,7 +54,7 @@ public class XRoot {
 		assert file != null;
 		//
 
-		final JAXBContext context = JAXBContext.newInstance(getClass());
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { getClass() }, null);
 		final Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
 		marshaller.marshal(this, file);
@@ -73,7 +74,7 @@ public class XRoot {
 		assert file.canRead();
 		//
 
-		final JAXBContext context = JAXBContext.newInstance(XRoot.class);
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { XRoot.class }, null);
 		final Unmarshaller unmarshaller = context.createUnmarshaller();
 		final XRoot result = (XRoot) unmarshaller.unmarshal(file);
 

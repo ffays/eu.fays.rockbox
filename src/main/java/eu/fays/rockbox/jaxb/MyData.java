@@ -1,12 +1,12 @@
 package eu.fays.rockbox.jaxb;
 
+import static jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
+import static jakarta.xml.bind.Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION;
 import static java.lang.Boolean.TRUE;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
-import static jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
-import static jakarta.xml.bind.Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -18,6 +18,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
+
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
+import org.xml.sax.SAXException;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -32,10 +38,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import jakarta.xml.bind.util.ValidationEventCollector;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
-import org.xml.sax.SAXException;
 
 /**
  * A class to play around with JAXB concepts.<br>
@@ -302,7 +304,7 @@ public class MyData {
 		assert file != null;
 		//
 
-		final JAXBContext context = JAXBContext.newInstance(getClass());
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { getClass() }, null);
 		final Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
 		marshaller.setProperty(JAXB_NO_NAMESPACE_SCHEMA_LOCATION, "../" + XML_SCHEMA_FILE.getPath().replace(System.getProperty("file.separator"), "/"));
@@ -323,7 +325,7 @@ public class MyData {
 		assert file.canRead();
 		//
 
-		final JAXBContext context = JAXBContext.newInstance(MyData.class);
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { MyData.class }, null);
 		final SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
 		final Schema schema = factory.newSchema(XML_SCHEMA_FILE);
 

@@ -1,14 +1,18 @@
 package eu.fays.rockbox.jaxb.mapofmap;
 
+import static jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
 import static java.lang.Boolean.TRUE;
+import static java.text.MessageFormat.format;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
-import static jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
 
 import java.io.File;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -19,8 +23,6 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import static java.text.MessageFormat.format;
-import static java.util.AbstractMap.SimpleImmutableEntry;
 
 @XmlType
 @XmlAccessorType(XmlAccessType.NONE)
@@ -110,7 +112,7 @@ public class Document {
 		assert file != null;
 		//
 
-		final JAXBContext context = JAXBContext.newInstance(getClass());
+		final JAXBContext context = JAXBContextFactory.createContext(new Class<?> [] { getClass() }, null);
 		final Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
 		marshaller.marshal(this, file);
