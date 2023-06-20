@@ -1,12 +1,13 @@
 package eu.fays.rockbox.spy;
 
+import static java.lang.System.out;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import static java.lang.System.out;
 
 public class P6SpyEssay {
 
@@ -38,7 +39,7 @@ public class P6SpyEssay {
 									out.print(value.toString());
 								}
 							}
-							System.out.println();
+							out.println();
 						}
 					}
 				} else {
@@ -54,7 +55,7 @@ public class P6SpyEssay {
 						}
 					}
 				}
-				System.out.println();
+				out.println();
 			}
 		}
 	}
