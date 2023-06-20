@@ -48,14 +48,13 @@ public class P6SpyEssay {
 					try (final Statement statement = connection.createStatement()) {
 						if (sql.startsWith("UPDATE") || sql.startsWith("INSERT") || sql.startsWith("DELETE")) {
 							final int updateCount = statement.executeUpdate(sql);
-							out.print(updateCount);
+							out.println(updateCount);
 						} else {
 							boolean rc = statement.execute(sql);
-							out.print(rc);
+							out.println(rc);
 						}
 					}
 				}
-				out.println();
 			}
 		}
 	}
