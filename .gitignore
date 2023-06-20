@@ -20,3 +20,4 @@ target/
 /create_tables.sql
 /drop_tables.sql
 /output/
+/spy.log
