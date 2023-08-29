@@ -1,39 +1,51 @@
 {
-  "books" : [ {
-    "id" : "ba1930ec-6ffc-45ad-a644-d07faa159076",
-    "title" : "A la recherche du temps perdu",
-    "author" : "Proust",
-    "publication_date" : "1913-01-01"
-  }, {
-    "id" : "bfbb52bd-eccd-4ade-ab29-621c9b4e4e74",
-    "title" : "Le rouge et le noir",
-    "author" : "Stendhal",
-    "publication_date" : "1830-11-13"
-  }, {
-    "id" : "ff3136de-5a54-4cdd-98a8-6f4423f286d6",
-    "title" : "Effective Java 3rd edition",
-    "author" : "Joshua Bloch",
-    "publication_date" : "2017-12-27"
-  }, {
-    "id" : "bb1ea8ca-fb5a-4ca2-9a5b-5d058858ba5d",
-    "title" : "Java Concurrency in Practice",
-    "author" : "Brian Goetz",
-    "publication_date" : "2006-05-09"
-  }, {
-    "id" : "ae12bade-96f4-4534-9637-89ad58b70940",
-    "title" : "UML Distilled 3rd edition",
-    "author" : "Martin Fowler",
-    "publication_date" : "2003-09-15"
-  } ],
-  "bookshelfs" : [ {
-    "name" : "100 French literature",
-    "books" : [ "ba1930ec-6ffc-45ad-a644-d07faa159076", "bfbb52bd-eccd-4ade-ab29-621c9b4e4e74" ]
-  }, {
-    "name" : "200 Computer science",
-    "books" : [ "ff3136de-5a54-4cdd-98a8-6f4423f286d6", "bb1ea8ca-fb5a-4ca2-9a5b-5d058858ba5d", "ae12bade-96f4-4534-9637-89ad58b70940" ]
-  }, {
-    "name" : "999 Duplicates",
-    "books" : [ "ba1930ec-6ffc-45ad-a644-d07faa159076", "ae12bade-96f4-4534-9637-89ad58b70940" ]
-  } ],
-  "location" : "The great library of Alexandria"
+   "library" : {
+      "noNamespaceSchemaLocation" : "Library-eclipselink-moxy.schema.json",
+      "books" : {
+         "book" : [ {
+            "id" : "a2810503-5521-4281-8be6-e3cc04e9a624",
+            "title" : "A la recherche du temps perdu",
+            "author" : "Proust",
+            "publicationDate" : "1913-01-01"
+         }, {
+            "id" : "f424f057-e71c-4685-84d8-1298a6c6e592",
+            "title" : "Le rouge et le noir",
+            "author" : "Stendhal",
+            "publicationDate" : "1830-11-13"
+         }, {
+            "id" : "e533b217-7cf7-4193-94a5-6435396655ad",
+            "title" : "Effective Java 3rd edition",
+            "author" : "Joshua Bloch",
+            "publicationDate" : "2017-12-27"
+         }, {
+            "id" : "bdba54cf-0e5a-430b-a379-fd619fcec49d",
+            "title" : "Java Concurrency in Practice",
+            "author" : "Brian Goetz",
+            "publicationDate" : "2006-05-09"
+         }, {
+            "id" : "bff625f5-3fa0-4568-aa9f-1d204ab39c3e",
+            "title" : "UML Distilled 3rd edition",
+            "author" : "Martin Fowler",
+            "publicationDate" : "2003-09-15"
+         } ]
+      },
+      "bookshelfs" : {
+         "bookshelf" : [ {
+            "name" : "100 French literature",
+            "books" : {
+               "book" : [ "a2810503-5521-4281-8be6-e3cc04e9a624", "f424f057-e71c-4685-84d8-1298a6c6e592" ]
+            }
+         }, {
+            "name" : "200 Computer science",
+            "books" : {
+               "book" : [ "e533b217-7cf7-4193-94a5-6435396655ad", "bdba54cf-0e5a-430b-a379-fd619fcec49d", "bff625f5-3fa0-4568-aa9f-1d204ab39c3e" ]
+            }
+         }, {
+            "name" : "999 Duplicates",
+            "books" : {
+               "book" : [ "a2810503-5521-4281-8be6-e3cc04e9a624", "bff625f5-3fa0-4568-aa9f-1d204ab39c3e" ]
+            }
+         } ]
+      }
+   }
 }
