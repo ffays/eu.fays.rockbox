@@ -1,0 +1,53 @@
+<library xsi:noNamespaceSchemaLocation="Library.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <books>
+      <book id="ba1930ec-6ffc-45ad-a644-d07faa159076">
+         <title>A la recherche du temps perdu</title>
+         <author>Proust</author>
+         <publicationDate>1913-01-01</publicationDate>
+      </book>
+      <book id="bfbb52bd-eccd-4ade-ab29-621c9b4e4e74">
+         <title>Le rouge et le noir</title>
+         <author>Stendhal</author>
+         <publicationDate>1830-11-13</publicationDate>
+      </book>
+      <book id="ff3136de-5a54-4cdd-98a8-6f4423f286d6">
+         <title>Effective Java 3rd edition</title>
+         <author>Joshua Bloch</author>
+         <publicationDate>2017-12-27</publicationDate>
+      </book>
+      <book id="bb1ea8ca-fb5a-4ca2-9a5b-5d058858ba5d">
+         <title>Java Concurrency in Practice</title>
+         <author>Brian Goetz</author>
+         <publicationDate>2006-05-09</publicationDate>
+      </book>
+      <book id="ae12bade-96f4-4534-9637-89ad58b70940">
+         <title>UML Distilled 3rd edition</title>
+         <author>Martin Fowler</author>
+         <publicationDate>2003-09-15</publicationDate>
+      </book>
+   </books>
+   <bookshelfs>
+      <bookshelf>
+         <name>100 French literature</name>
+         <books>
+            <book>ba1930ec-6ffc-45ad-a644-d07faa159076</book>
+            <book>bfbb52bd-eccd-4ade-ab29-621c9b4e4e74</book>
+         </books>
+      </bookshelf>
+      <bookshelf>
+         <name>200 Computer science</name>
+         <books>
+            <book>ff3136de-5a54-4cdd-98a8-6f4423f286d6</book>
+            <book>bb1ea8ca-fb5a-4ca2-9a5b-5d058858ba5d</book>
+            <book>ae12bade-96f4-4534-9637-89ad58b70940</book>
+         </books>
+      </bookshelf>
+      <bookshelf>
+         <name>999 Duplicates</name>
+         <books>
+            <book>ba1930ec-6ffc-45ad-a644-d07faa159076</book>
+            <book>ae12bade-96f4-4534-9637-89ad58b70940</book>
+         </books>
+      </bookshelf>
+   </bookshelfs>
+</library>

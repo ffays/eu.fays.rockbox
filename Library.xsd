@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="library" type="Library"/>
+
+	<xs:complexType name="Library">
+		<xs:all>
+			<xs:element name="books" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="book" type="Book" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="bookshelfs" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="bookshelf" type="Bookshelf" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="Book">
+		<xs:all>
+			<xs:element name="title" type="xs:string" minOccurs="0"/>
+			<xs:element name="author" type="xs:string" minOccurs="0"/>
+			<xs:element name="publicationDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="renter" type="xs:IDREF" minOccurs="0"/>
+		</xs:all>
+		<xs:attribute name="id" type="xs:ID"/>
+	</xs:complexType>
+
+	<xs:complexType name="User">
+		<xs:all>
+			<xs:element name="username" type="xs:string" minOccurs="0"/>
+		</xs:all>
+		<xs:attribute name="id" type="xs:ID"/>
+	</xs:complexType>
+
+	<xs:complexType name="Bookshelf">
+		<xs:all>
+			<xs:element name="name" type="xs:string" minOccurs="0"/>
+			<xs:element name="books" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="book" type="xs:IDREF" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>			
+		</xs:all>
+	</xs:complexType>
+</xs:schema>
