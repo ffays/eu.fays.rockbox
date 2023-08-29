@@ -13,6 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.XMLConstants;
@@ -25,8 +26,8 @@ import org.eclipse.persistence.oxm.MediaType;
 import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -169,7 +170,18 @@ public class Library {
 
 		Library result = null;
 
-		final JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class<?>[] { Library.class }, null);
+		final Map<String, Object> properties;
+		
+		if(mediaType == MediaType.APPLICATION_JSON) {
+			// https://eclipse.dev/eclipselink/documentation/4.0/moxy/moxy.html#BABFDBJG
+//			properties = new HashMap<String, Object>();
+//			properties.put("eclipselink.media-type", "application/json");
+			properties = null;
+		} else {
+			properties = null;
+		}
+		
+		final JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class<?>[] { Library.class }, properties);
 		final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 		unmarshaller.setProperty(JAXBContextProperties.MEDIA_TYPE /* "eclipselink.media-type" */, mediaType);
 //		unmarshaller.setProperty(Marshaller.JAXB_ENCODING, encoding.name());
@@ -178,7 +190,7 @@ public class Library {
 		if (useSchemaValidation) {
 			final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-			// Try lo load schema from bundle
+			// Trying to load schema from bundle
 			final String schemaFileName = XML_SCHEMA_FILE_NAME;
 			final URL schemaURL = Library.class.getResource("/" + schemaFileName); //$NON-NLS-1$
 			final Schema schema = (schemaURL != null) ? factory.newSchema(schemaURL) : factory.newSchema(new File(schemaFileName));
