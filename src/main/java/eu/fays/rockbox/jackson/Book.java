@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -23,6 +24,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -108,6 +110,16 @@ public class Book {
 	@Column(name = "publication_date", columnDefinition = "DATE")
 	LocalDate publicationDate;
 
+	// XML/JAXB Annotations
+	@XmlElement
+	// JSON/Jackson Annotations
+	@JsonProperty
+	@JsonManagedReference
+	// JPA annotations
+	@JoinColumn(name = "previous_edition")
+	@OneToOne
+	Book previousEdition;
+	
 	@XmlElement
 	@JoinColumn(name = "renter_uuid")
 	@ManyToOne

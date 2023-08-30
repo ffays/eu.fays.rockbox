@@ -59,16 +59,17 @@ public class Librarian {
 	private static final UUID bookId3 = makeNonColonizedNameCompliant(randomUUID());
 	private static final UUID bookId4 = makeNonColonizedNameCompliant(randomUUID());
 	private static final UUID bookId5 = makeNonColonizedNameCompliant(randomUUID());
+	private static final UUID bookId6 = makeNonColonizedNameCompliant(randomUUID());
 	private static final UUID bookshelfId1 = makeNonColonizedNameCompliant(randomUUID());
 	private static final UUID bookshelfId2 = makeNonColonizedNameCompliant(randomUUID());
 	private static final UUID bookshelfId3 = makeNonColonizedNameCompliant(randomUUID());
 	
 	private static final Book book1 = new Book(bookId1, "A la recherche du temps perdu", "Proust", LocalDate.parse("1913-01-01"));
-	private static final Book book2 = new Book(bookId2, "Le rouge et le noir", "Stendhal", LocalDate.parse("1830-11-13"));
+	private static final Book book2 = new Book(bookId2, "Effective Java 2nd edition", "Joshua Bloch", LocalDate.parse("2008-05-28"));
 	private static final Book book3 = new Book(bookId3, "Effective Java 3rd edition", "Joshua Bloch", LocalDate.parse("2017-12-27"));
 	private static final Book book4 = new Book(bookId4, "Java Concurrency in Practice", "Brian Goetz", LocalDate.parse("2006-05-09"));
 	private static final Book book5 = new Book(bookId5, "UML Distilled 3rd edition", "Martin Fowler", LocalDate.parse("2003-09-15"));
-
+	private static final Book book6 = new Book(bookId6, "Le rouge et le noir", "Stendhal", LocalDate.parse("1830-11-13"));
 
 	/**
 	 * Proof of concept for both XML and JSON, both marshaling and unmarshaling<br>
@@ -83,6 +84,7 @@ public class Librarian {
 	 * @throws Exception in case of unexpected error
 	 */
 	public static void main(String[] args) throws Exception {
+		book3.previousEdition = book2;
 		try (final OutputStreamWriter writer = new OutputStreamWriter(out)) {
 			{
 				// Building the library
@@ -220,6 +222,7 @@ public class Librarian {
 		library.books.add(book3);
 		library.books.add(book4);
 		library.books.add(book5);
+		library.books.add(book6);
 
 		// Moving the empty bookshelves inside the library
 		final Bookshelf bookshelf1 = new Bookshelf(bookshelfId1, "100 French literature");
@@ -230,7 +233,8 @@ public class Librarian {
 		library.bookshelfs.add(bookshelf3);
 		// Putting books in the bookshelfs
 		bookshelf1.books.add(book1);
-		bookshelf1.books.add(book2);
+		bookshelf1.books.add(book6);
+		bookshelf2.books.add(book2);
 		bookshelf2.books.add(book3);
 		bookshelf2.books.add(book4);
 		bookshelf2.books.add(book5);
