@@ -99,7 +99,7 @@ public class MyData {
 	public int hashCode() {
 		final Set<Object> set = new HashSet<>();
 		set.add(Boolean.valueOf(isMyBoolean()));
-		set.add(new Integer(getMyInteger()));
+		set.add(Integer.valueOf(getMyInteger()));
 		set.add(getMyDate());
 		set.add(getMyFruit());
 		return set.hashCode();

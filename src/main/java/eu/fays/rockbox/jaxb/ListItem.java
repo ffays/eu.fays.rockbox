@@ -1,5 +1,7 @@
 package eu.fays.rockbox.jaxb;
 
+import java.lang.reflect.InvocationTargetException;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -18,8 +20,8 @@ public abstract class ListItem<T> {
 	 */
 	public ListItem() {
 		try {
-			_li = getParameterizedType().newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+			li = getParameterizedType().getDeclaredConstructor().newInstance();
+		} catch (final InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -28,8 +30,8 @@ public abstract class ListItem<T> {
 	 * Constructor
 	 * @param li value of the list item
 	 */
-	public ListItem(T li) {
-		_li = li;
+	public ListItem(final T li) {
+		this.li = li;
 	}
 
 	/**
@@ -37,15 +39,15 @@ public abstract class ListItem<T> {
 	 * @return the value
 	 */
 	public T getLi() {
-		return _li;
+		return li;
 	}
 
 	/**
 	 * Sets the value
 	 * @param li the value
 	 */
-	public void setLi(T li) {
-		_li = li;
+	public void setLi(final T li) {
+		this.li = li;
 	}
 
 	/**
@@ -87,5 +89,5 @@ public abstract class ListItem<T> {
 
 	/** list item's value */
 	@XmlValue
-	private T _li;
+	private T li;
 }

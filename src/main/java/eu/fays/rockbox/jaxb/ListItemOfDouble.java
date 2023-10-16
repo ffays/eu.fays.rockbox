@@ -22,8 +22,8 @@ public class ListItemOfDouble {
 	 * Constructor
 	 * @param li value of the list item
 	 */
-	public ListItemOfDouble(double li) {
-		_li = li;
+	public ListItemOfDouble(final double li) {
+		this.li = li;
 	}
 
 	/**
@@ -31,15 +31,15 @@ public class ListItemOfDouble {
 	 * @return the value
 	 */
 	public double getLi() {
-		return _li;
+		return li;
 	}
 
 	/**
 	 * Sets the value
 	 * @param li the value
 	 */
-	public void setLi(double li) {
-		_li = li;
+	public void setLi(final double li) {
+		this.li = li;
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class ListItemOfDouble {
 	 */
 	@Override
 	public int hashCode() {
-		return new Double(_li).hashCode();
+		return new Double.valueOf(li).hashCode();
 	}
 
 	/**
@@ -67,10 +67,10 @@ public class ListItemOfDouble {
 	 */
 	@Override
 	public String toString() {
-		return Double.toString(_li);
+		return Double.toString(li);
 	}
 
 	/** list item's value */
 	@XmlValue
-	private double _li;
+	private double li;
 }
