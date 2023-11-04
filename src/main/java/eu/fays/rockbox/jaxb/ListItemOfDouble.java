@@ -47,7 +47,7 @@ public class ListItemOfDouble {
 	 */
 	@Override
 	public int hashCode() {
-		return new Double.valueOf(li).hashCode();
+		return Double.valueOf(li).hashCode();
 	}
 
 	/**
