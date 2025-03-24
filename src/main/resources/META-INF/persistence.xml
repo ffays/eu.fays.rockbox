@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence persistence_2_0.xsd" version="2.0">
-    <persistence-unit name="h2pu" transaction-type="RESOURCE_LOCAL">
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
+   version="3.2">
+    <persistence-unit name="librarian-pesistence-unit" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <!-- <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:;INIT=CREATE SCHEMA IF NOT EXISTS kanban"/> -->
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/homebrew.mxcl.h2;INIT=CREATE SCHEMA IF NOT EXISTS kanban"/>
-            <property name="javax.persistence.jdbc.user" value="sa"/>	
-            <property name="javax.persistence.jdbc.password" value="sa"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:mem:;INIT=CREATE SCHEMA IF NOT EXISTS librarian"/>
+            <!-- <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/homebrew.mxcl.h2;INIT=CREATE SCHEMA IF NOT EXISTS librarian"/> -->
+            <property name="jakarta.persistence.jdbc.user" value="sa"/>	
+            <property name="jakarta.persistence.jdbc.password" value="sa"/>
             <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
 
 <!--
-			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=master;sendStringParametersAsUnicode=true" />
+			<property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=master;sendStringParametersAsUnicode=true" />
 -->
 
-            <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
-            <property name="eclipselink.create-ddl-jdbc-file-name" value="create_tables.sql"/>
-            <property name="eclipselink.drop-ddl-jdbc-file-name" value="drop_tables.sql"/>
+            <property name="eclipselink.create-ddl-jdbc-file-name" value="librarian_create_tables.sqll"/>
+            <property name="eclipselink.drop-ddl-jdbc-file-name" value="librarian_drop_tables.sql"/>
             <property name="eclipselink.ddl-generation.output-mode" value="both"/>
         </properties>
     </persistence-unit>
