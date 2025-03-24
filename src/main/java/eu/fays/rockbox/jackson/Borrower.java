@@ -35,8 +35,8 @@ import jakarta.xml.bind.annotation.XmlType;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 //JPA annotations
 @Entity
-@Table(schema = "librarian", name = "user")
-public class User {
+@Table(schema = "librarian", name = "borrower")
+public class Borrower {
 	/** Universally Unique Identifier compatible with XML IDs (cf. type="xs:ID") */
 	// JSON/Jackson Annotations
 	@JsonIgnore

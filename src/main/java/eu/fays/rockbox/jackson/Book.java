@@ -121,9 +121,9 @@ public class Book {
 	Book previousEdition;
 	
 	@XmlElement
-	@JoinColumn(name = "renter_uuid")
+	@JoinColumn(name = "borrower_uuid")
 	@ManyToOne
-	User renter;
+	Borrower borrower;
 	
 	/**
 	 * Constructor

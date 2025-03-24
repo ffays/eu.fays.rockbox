@@ -168,8 +168,7 @@ public class Librarian {
 				final Map<String, Object> properties = new HashMap<String, Object>();
 
 				properties.put(CLASSLOADER, Librarian.class.getClassLoader());
-//				properties.put(JDBC_URL, "jdbc:h2:mem:librarian;INIT=CREATE SCHEMA IF NOT EXISTS librarian");
-				properties.put(JDBC_URL, "jdbc:h2:tcp://localhost/~/mangogem_aps_production;INIT=CREATE SCHEMA IF NOT EXISTS librarian");
+				properties.put(JDBC_URL, "jdbc:h2:mem:librarian;INIT=CREATE SCHEMA IF NOT EXISTS librarian\\;CREATE SCHEMA IF NOT EXISTS kanban\\;CREATE SCHEMA IF NOT EXISTS forest\\;CREATE SCHEMA IF NOT EXISTS foret");
 				properties.put(JDBC_USER, "sa");
 				properties.put(JDBC_PASSWORD, "sa");
 				properties.put(JDBC_DRIVER, "org.h2.Driver");
