@@ -6,9 +6,9 @@ import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static java.text.MessageFormat.format;
 import static java.util.Collections.unmodifiableList;
+import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.getCommonPrefix;
-import static java.util.regex.Pattern.compile; 
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,15 +22,14 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHeader;
-
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.net.URIBuilder;
 /**
  * Generates a Bash script to download a chunked video.<br>
  * <br>
@@ -133,7 +132,7 @@ public class DownloadScriptGenerator {
 		List<String> result = new ArrayList<>();
 
 		/* @formatter:off */
-		final HttpUriRequest httpGet = RequestBuilder
+		final ClassicHttpRequest httpGet = ClassicRequestBuilder
 			.get()
 			.setUri(uri)
 			.setHeader(new BasicHeader(HttpHeaders.ACCEPT, "text/html"))
@@ -141,7 +140,7 @@ public class DownloadScriptGenerator {
 		/* @formatter:on */
 
 		try (final CloseableHttpResponse response = ua.execute(httpGet)) {
-			final int statusCode = response.getStatusLine().getStatusCode();
+			final int statusCode = response.getCode();
 
 			if (statusCode >= 400) {
 				LOGGER.warning(format("statusCode: {0}", statusCode));

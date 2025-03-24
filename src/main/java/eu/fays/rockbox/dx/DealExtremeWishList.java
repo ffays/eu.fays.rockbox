@@ -1,5 +1,6 @@
 package eu.fays.rockbox.dx;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.text.MessageFormat.format;
 import static java.util.stream.Collectors.toList;
 
@@ -20,21 +21,19 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Consts;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.config.ConnectionConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -96,16 +95,10 @@ public class DealExtremeWishList {
 		}));
 
 		final RequestConfig requestConfig = RequestConfig.custom()
-				.setSocketTimeout(-1)
 				.setRedirectsEnabled(true)
 				.build();
 
-		final ConnectionConfig connectionConfig = ConnectionConfig.custom()
-				.setCharset(Consts.UTF_8)
-				.build();
-
 		final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-		connectionManager.setDefaultConnectionConfig(connectionConfig);
 
 		final CloseableHttpClient result = HttpClients.custom()
 				.setConnectionManager(connectionManager)
@@ -120,7 +113,7 @@ public class DealExtremeWishList {
 	public static int openLoginPage(final CloseableHttpClient ua) throws IOException, URISyntaxException {
 		int result = Integer.MAX_VALUE;
 		/* @formatter:off */
-		final HttpUriRequest httpGet = RequestBuilder.get()
+		final ClassicHttpRequest httpGet = ClassicRequestBuilder.get()
 				.setUri(new URI("https://passport.dx.com/?redirect=http%3A%2F%2Fwww.dx.com%2F"))
 				.setHeader(new BasicHeader(HttpHeaders.ACCEPT, "text/html"))
 				.build();
@@ -128,7 +121,7 @@ public class DealExtremeWishList {
 
 		// Open connection
 		try (final CloseableHttpResponse response = ua.execute(httpGet)) {
-			result = response.getStatusLine().getStatusCode();
+			result = response.getCode();
 			LOGGER.info(format("statusCode: {0}", result));
 		}
 
@@ -147,15 +140,15 @@ public class DealExtremeWishList {
 		final List<BasicNameValuePair> form = Stream.of(new BasicNameValuePair("AccountName", login), new BasicNameValuePair("Password", password)).collect(toList());
 
 		/* @formatter:off */
-		final HttpUriRequest httpPost = RequestBuilder.post()
+		final ClassicHttpRequest httpPost = ClassicRequestBuilder.post()
 				.setUri(new URI("https://passport.dx.com/?redirect=http%3A%2F%2Fwww.dx.com%2F"))
 				.setHeader(new BasicHeader(HttpHeaders.ACCEPT, "text/html"))
-				.setEntity(new UrlEncodedFormEntity(form, Consts.UTF_8))
+				.setEntity(new UrlEncodedFormEntity(form, UTF_8))
 				.build();
 		/* @formatter:on */
 
 		try (final CloseableHttpResponse response = ua.execute(httpPost)) {
-			result = response.getStatusLine().getStatusCode();
+			result = response.getCode();
 			LOGGER.info(format("statusCode: {0}", result));
 
 			final HttpEntity responseEntity = response.getEntity();
@@ -176,14 +169,14 @@ public class DealExtremeWishList {
 		Document result = null;
 
 		/* @formatter:off */
-		final HttpUriRequest httpGet = RequestBuilder.get()
+		final ClassicHttpRequest httpGet = ClassicRequestBuilder.get()
 				.setUri(new URI(format("https://my.dx.com/Wishlist/Index?pageIndex={0}", pageIndex)))
 				.setHeader(new BasicHeader(HttpHeaders.ACCEPT, "text/html"))
 				.build();
 		/* @formatter:on */
 
 		try (final CloseableHttpResponse response = ua.execute(httpGet)) {
-			final int statusCode = response.getStatusLine().getStatusCode();
+			final int statusCode = response.getCode();
 			LOGGER.info(format("statusCode: {0}", statusCode));
 
 			if (statusCode >= 400) {

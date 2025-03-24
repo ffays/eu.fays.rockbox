@@ -2,7 +2,6 @@ package eu.fays.rockbox.pdf;
 
 import static java.awt.Color.BLACK;
 import static org.apache.pdfbox.pdmodel.common.PDRectangle.A4;
-import static org.apache.pdfbox.pdmodel.font.PDType1Font.HELVETICA;
 import static org.vandeseer.easytable.settings.HorizontalAlignment.RIGHT;
 
 import java.awt.Desktop;
@@ -13,6 +12,10 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts.FontName;
 import org.vandeseer.easytable.TableDrawer;
 import org.vandeseer.easytable.structure.Row;
 import org.vandeseer.easytable.structure.Row.RowBuilder;
@@ -28,18 +31,21 @@ public class EasyTableEssay {
 		final double randMax = 100_000d;
 
 		final File file = File.createTempFile(EasyTableEssay.class.getSimpleName(), ".pdf");
-		try (final PDDocument document = new PDDocument()) {
+		try (final PDDocument document = new PDDocument()) {			
 			final PDPage page = new PDPage(A4);
 			document.addPage(page);
 
+			
 			try (final PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+				final FontName helveticBoldFontName = Standard14Fonts.getMappedFontName(FontName.HELVETICA_BOLD.getName());
+				final PDFont helveticBoldFont=  new PDType1Font(helveticBoldFontName);
 
 				final TableBuilder tableBuilder = Table.builder();
 				for(int c = 0; c<cN; c++) {
 					tableBuilder
 						.addColumnOfWidth(38f)
 						.fontSize(8)
-						.font(HELVETICA);
+						.font(helveticBoldFont);
 				}
 				
 				// Header
