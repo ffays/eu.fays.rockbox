@@ -103,6 +103,14 @@ public class Librarian {
 					final String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(library);
 					out.println(json);
 				}
+				// JSON via Jackson Using a Mix-in
+				{
+					final ObjectMapper mapper = newObjectMapper();
+					mapper.addMixIn(Book.class, IBookBasicMixin.class);
+					out.print(cartouche("JSON via Jackson with a Mixin"));
+					final String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(library);
+					out.println(json);
+				}
 
 				// JSON Schema via EclipseLink MOXY
 				{
