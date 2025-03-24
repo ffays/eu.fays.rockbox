@@ -17,7 +17,6 @@ target/
 /bin/
 /wishlist.xml
 /.DS_Store
-/create_tables.sql
-/drop_tables.sql
 /output/
 /spy.log
+/*.sql
