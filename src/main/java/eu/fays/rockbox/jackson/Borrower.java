@@ -20,9 +20,12 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlID;
 import jakarta.xml.bind.annotation.XmlType;
 
 //XML/JAXB Annotations
@@ -38,20 +41,54 @@ import jakarta.xml.bind.annotation.XmlType;
 @Table(schema = "librarian", name = "borrower")
 public class Borrower {
 	/** Universally Unique Identifier compatible with XML IDs (cf. type="xs:ID") */
-	// JSON/Jackson Annotations
-	@JsonIgnore
 	// JPA annotations
 	@Column(name = "uuid", columnDefinition = "UUID")
 	@Convert(converter = UniversallyUniqueIdentifierAdapter.class)
 	@Id
-	final UUID uuid = makeNonColonizedNameCompliant(UUID.randomUUID());
+	UUID uuid = makeNonColonizedNameCompliant(UUID.randomUUID());
 	
+	/** The identifier of the book, derived from its Universally Unique Identifier */
+	// XML/JAXB Annotations
+	@XmlID
+	@XmlAttribute
+	// JPA annotations
+	@Transient
+	String id;
+
 	/** Username */
 	// XML/JAXB Annotations
 	@XmlElement
-	// JSON/Jackson Annotations
-	@JsonProperty
 	// JPA annotations
 	@Column(name = "username", length = 200)
 	String username;
+	
+	
+	public Borrower() {
+		
+	}
+	
+	public Borrower(final UUID i, final String un) {
+		uuid = i;
+		id = i.toString();
+		username = un;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonIgnore
+	public UUID getUuid() {
+		return uuid;
+	}
+	
+	// JSON/Jackson Annotations
+	@JsonProperty
+	public String getId() {
+		return id;
+	}
+
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	public String getUsername() {
+		return username;
+	}
 }

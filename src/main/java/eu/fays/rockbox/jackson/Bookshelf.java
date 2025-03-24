@@ -53,8 +53,6 @@ import jakarta.xml.bind.annotation.XmlType;
 public class Bookshelf {
 
 	/** Universally Unique Identifier compatible with XML IDs (cf. type="xs:ID") */
-	// JSON/Jackson Annotations
-	@JsonIgnore
 	// JPA annotations
 	@Column(name = "uuid", columnDefinition = "UUID")
 	@Convert(converter = UniversallyUniqueIdentifierAdapter.class)
@@ -64,8 +62,6 @@ public class Bookshelf {
 	/** Library having this bookshelf */
 	// XML/JAXB Annotations
 	@XmlTransient
-	// JSON/Jackson Annotations
-	@JsonIgnore
 	// JPA annotations
 	@ManyToOne(cascade = ALL)
 	@JoinColumns({
@@ -76,8 +72,6 @@ public class Bookshelf {
 	/** Name of the bookshelf */
 	// XML/JAXB Annotations
 	@XmlElement
-	// JSON/Jackson Annotations
-	@JsonProperty
 	// JPA annotations
 	@Column(name = "name", length = 200)
 	String name;
@@ -88,9 +82,6 @@ public class Bookshelf {
 	@XmlIDREF
 	@XmlElement
 	@XmlPath("books/book/text()")
-	// JSON/Jackson Annotations
-	@JsonProperty
-	@JsonManagedReference
 	// JPA annotations
 	@JoinTable(schema = "librarian", name = "bookshelf_book", joinColumns = @JoinColumn(name = "bookshelf_uuid"), inverseJoinColumns = @JoinColumn(name = "book_uuid"))
 	List<Book> books = new ArrayList<>();
@@ -111,5 +102,30 @@ public class Bookshelf {
 	public Bookshelf(final UUID i, final String n) {
 		uuid = i;
 		name = n;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonIgnore
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonIgnore
+	public Library getLibrary() {
+		return library;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	public String getName() {
+		return name;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	@JsonManagedReference
+	public List<Book> getBooks() {
+		return books;
 	}
 }

@@ -189,7 +189,7 @@ public class Librarian {
 				//
 				{
 					final Library library = buildLibrary();
-					library.setBestBook(book3);	
+					library.bestBook = book3;	
 					entityManager.getTransaction().begin();
 					entityManager.persist(library);
 					entityManager.getTransaction().commit();

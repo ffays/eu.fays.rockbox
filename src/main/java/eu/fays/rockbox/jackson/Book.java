@@ -53,8 +53,6 @@ import jakarta.xml.bind.annotation.XmlType;
 public class Book {
 
 	/** Universally Unique Identifier compatible with XML IDs (cf. type="xs:ID") */
-	// JSON/Jackson Annotations
-	@JsonIgnore
 	// JPA annotations
 	@Column(name = "uuid", columnDefinition = "UUID")
 	@Convert(converter = UniversallyUniqueIdentifierAdapter.class)
@@ -64,8 +62,6 @@ public class Book {
 	/** Library indexing this book */
 	// XML/JAXB Annotations
 	@XmlTransient
-	// JSON/Jackson Annotations
-	@JsonIgnore
 	// JPA annotations
 	@ManyToOne(cascade = ALL)
 	@JoinColumns({
@@ -77,8 +73,6 @@ public class Book {
 	// XML/JAXB Annotations
 	@XmlID
 	@XmlAttribute
-	// JSON/Jackson Annotations
-	@JsonProperty
 	// JPA annotations
 	@Transient
 	private String id;
@@ -86,8 +80,6 @@ public class Book {
 	/** Title of the book */
 	// XML/JAXB Annotations
 	@XmlElement
-	// JSON/Jackson Annotations
-	@JsonProperty
 	// JPA annotations
 	@Column(name = "title", length = 200)
 	String title;
@@ -95,8 +87,6 @@ public class Book {
 	/** Author of the book */
 	// XML/JAXB Annotations
 	@XmlElement
-	// JSON/Jackson Annotations
-	@JsonProperty
 	// JPA annotations
 	@Column(name = "author", length = 200)
 	String author;
@@ -104,23 +94,20 @@ public class Book {
 	/** First publication date of the book */
 	// XML/JAXB Annotations
 	@XmlElement
-	// JSON/Jackson Annotations
-	@JsonProperty
 	// JPA annotations
 	@Column(name = "publication_date", columnDefinition = "DATE")
 	LocalDate publicationDate;
 
 	// XML/JAXB Annotations
 	@XmlElement
-	// JSON/Jackson Annotations
-	@JsonProperty
-	@JsonManagedReference
 	// JPA annotations
 	@JoinColumn(name = "previous_edition")
 	@OneToOne
 	Book previousEdition;
 	
+	// XML/JAXB Annotations
 	@XmlElement
+	// JPA annotations
 	@JoinColumn(name = "borrower_uuid")
 	@ManyToOne
 	Borrower borrower;
@@ -146,5 +133,55 @@ public class Book {
 		title = t;
 		author = a;
 		publicationDate = d;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonIgnore
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonIgnore
+	public Library getLibrary() {
+		return library;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	public String getId() {
+		return id;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	public String getTitle() {
+		return title;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	public String getAuthor() {
+		return author;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	public LocalDate getPublicationDate() {
+		return publicationDate;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	@JsonManagedReference
+	public Book getPreviousEdition() {
+		return previousEdition;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	@JsonManagedReference
+	public Borrower getBorrower() {
+		return borrower;
 	}
 }

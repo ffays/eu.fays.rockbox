@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.xml.XMLConstants;
@@ -76,10 +77,12 @@ public class Library {
 	private static final String XML_SCHEMA_FILE_NAME = "Library.xsd";
 	/** File name of the JSON Schema */
 	private static final String JSON_SCHEMA_FILE_NAME = "Library-eclipselink-moxy.schema.json";
+	/** Masks: 0xA000000000000000, 0xB000000000000000, 0xC000000000000000, 0xD000000000000000, 0xE000000000000000 and 0xF000000000000000 */
+	private static final long[] MASKS = { -0x6000000000000000L, -0x5000000000000000L, -0x4000000000000000L, -0x3000000000000000L, -0x2000000000000000L, -0x1000000000000000L };
+	/** Random number generator */
+	private static final Random RANDOM = new Random();
 
 	/** Universally Unique Identifier compatible with XML IDs (cf. type="xs:ID") */
-	// JSON/Jackson Annotations
-	@JsonIgnore
 	// JPA annotations
 	@Column(name = "uuid", columnDefinition = "UUID")
 	@Convert(converter = UniversallyUniqueIdentifierAdapter.class)
@@ -90,8 +93,6 @@ public class Library {
 	// XML/JAXB Annotations
 	@XmlElementWrapper(name = "books")
 	@XmlElement(name = "book")
-	// JSON/Jackson Annotations
-	@JsonProperty
 	// JPA annotations
 	@OneToMany(mappedBy = "library", cascade = ALL, orphanRemoval = true)
 	List<Book> books = new ArrayList<>();
@@ -100,21 +101,20 @@ public class Library {
 	// XML/JAXB Annotations
 	@XmlElementWrapper(name = "bookshelfs")
 	@XmlElement(name = "bookshelf")
-	// JSON/Jackson Annotations
-	@JsonProperty
 	// JPA annotations
 	@OneToMany(mappedBy = "library", cascade = ALL, orphanRemoval = true)
 	List<Bookshelf> bookshelfs = new ArrayList<>();
 
 	/** Physical location of the library */
-	// JSON/Jackson Annotations
-	@JsonProperty
+	// XML/JAXB Annotations
+	@XmlElement(name = "location")
 	// JPA annotations
 	@Column(name = "location", length = 200)
 	String location;
 
+	// XML/JAXB Annotations
 	@XmlTransient
-	@JsonIgnore
+	// JPA annotations
 	@JoinColumn(name = "best_book_uuid")
 	@ManyToOne
 	Book bestBook; 
@@ -137,16 +137,6 @@ public class Library {
 		location = l;
 	}
 	
-	
-
-	public Book getBestBook() {
-		return bestBook;
-	}
-
-	public void setBestBook(Book bestBook) {
-		this.bestBook = bestBook;
-	}
-
 	/**
 	 * Unmarshal the given input stream
 	 * 
@@ -258,11 +248,45 @@ public class Library {
 		assert uuid != null;
 		//
 
-		// To be valid, an XML Identifier must start with an alphabetic character,
-		// therefore the two most significant bits of the UUID are set
-		// in order to have the UUID starting with hexadecimal digit from 0xA to 0xF
-		final UUID result = new UUID(uuid.getMostSignificantBits() | -0x6000000000000000L, uuid.getLeastSignificantBits());
+		final UUID result;
+		long msb = uuid.getMostSignificantBits();
+		if((msb  & -0x6000000000000000L) == -0x6000000000000000L /* 0xA000000000000000 1010 */ || (msb  & -0x4000000000000000L) == -0x4000000000000000L /* 0xC000000000000000 1100 */) {
+			result = uuid;
+		} else {
+			msb = msb & 0x0FFFFFFFFFFFFFFFL | MASKS[RANDOM.nextInt(6 /* MASKS.length */)];
+			result = new UUID(msb, uuid.getLeastSignificantBits());
+		}
 
 		return result;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonIgnore
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	public List<Book> getBooks() {
+		return books;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	public List<Bookshelf> getBookshelfs() {
+		return bookshelfs;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonProperty
+	public String getLocation() {
+		return location;
+	}
+
+	// JSON/Jackson Annotations
+	@JsonIgnore
+	public Book getBestBook() {
+		return bestBook;
 	}
 }
