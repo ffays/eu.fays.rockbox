@@ -30,7 +30,7 @@ public class ORToolsEssay {
 
 	/** Java command */
 	public static final String JAVA_COMMAND = """
-java -cp "target/eu.fays.rockbox-1.0.0.jar:$(ls -1 target/dependency/*.jar | paste -s -d ':' -)" \
+java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
   -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' \
   -Djava.library.path="$(dirname ~/.m2/repository/com/google/ortools/**/*jniortools* | paste -s -d ':' -)" \
   eu.fays.rockbox.ortools.ORToolsEssay
