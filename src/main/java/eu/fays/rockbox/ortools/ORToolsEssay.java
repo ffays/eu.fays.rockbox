@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+import com.google.ortools.Loader;
 import com.google.ortools.constraintsolver.ConstraintSolverParameters;
 import com.google.ortools.constraintsolver.DecisionBuilder;
 import com.google.ortools.constraintsolver.IntVar;
@@ -88,9 +89,10 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 					System.load(file.getAbsolutePath());
 				}
 			}
+			System.loadLibrary("jniortools");
+		} else {
+			Loader.loadNativeLibraries();
 		}
-		
-		System.loadLibrary("jniortools");
 		LOGGER.info("OR-Tools: " + OrToolsVersion.getVersionString());
 		LOGGER.info("Foreword: We are seing 20 heads and 56 legs.");
 		LOGGER.info("Question: How many " + RABBITS + " and how many " + PHEASANTS + " are we thus seeing?");
