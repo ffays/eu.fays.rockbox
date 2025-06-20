@@ -1,7 +1,14 @@
 package eu.fays.rockbox.ortools;
 
+import static java.io.File.pathSeparator;
+import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
+import static java.nio.file.Files.walk;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import com.google.ortools.constraintsolver.ConstraintSolverParameters;
 import com.google.ortools.constraintsolver.DecisionBuilder;
@@ -39,6 +46,9 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 	/** Standard logger */
 	private static final Logger LOGGER = Logger.getLogger(ORToolsEssay.class.getName());
 
+	/** java.library.path */
+	private static final String JAVA_LIBRARY_PATH = "java.library.path";
+
 	/** rabbits */
 	private static final String RABBITS = "rabbits";
 
@@ -51,15 +61,33 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 	 */
 	public static void main(String[] args) {
 		if (System.getProperty("os.name").indexOf("Windows") != -1) {
-			final File javaLibraryPath = new File(System.getProperty("java.library.path"));
-			System.load(new File(javaLibraryPath, "zlib1.dll").getAbsolutePath());
-			System.load(new File(javaLibraryPath, "utf8_validity.dll").getAbsolutePath());
-			System.load(new File(javaLibraryPath, "highs.dll").getAbsolutePath());
-			System.load(new File(javaLibraryPath, "abseil_dll.dll").getAbsolutePath());
-			System.load(new File(javaLibraryPath, "re2.dll").getAbsolutePath());
-			System.load(new File(javaLibraryPath, "libprotobuf.dll").getAbsolutePath());
-			System.load(new File(javaLibraryPath, "ortools.dll").getAbsolutePath());
-			System.load(new File(javaLibraryPath, "jniortools.dll").getAbsolutePath());
+			LOGGER.fine(JAVA_LIBRARY_PATH + "=" +System.getProperty(JAVA_LIBRARY_PATH));
+			final String javaLibraryPath = System.getProperty(JAVA_LIBRARY_PATH);
+			LOGGER.info(JAVA_LIBRARY_PATH + "==" + javaLibraryPath);
+			final String[] javaLibraryPathElements = javaLibraryPath.split(pathSeparator);
+			final Path orToolsLibraryPath = Stream.of(javaLibraryPathElements).flatMap(p -> { try { return walk(Path.of(p), FOLLOW_LINKS); } catch(IOException e) {return Stream.empty();}}).filter(p -> "jniortools.dll".equals(p.getFileName().toString())).findFirst().orElse(null);
+			if(orToolsLibraryPath != null) {
+				final File orToolsLibraryFolder = orToolsLibraryPath.toFile().getParentFile();
+				// the order of the dll is important.
+				final String[] orToolsLibraryFilenames = {
+					"zlib1.dll",
+					"utf8_validity.dll",
+					"highs.dll",
+					"abseil_dll.dll",
+					"re2.dll", // requires "abseil_dll.dll"
+					"libprotobuf.dll", // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll"
+					"ortools.dll", // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll"
+					"jniortools.dll" // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll", "ortools.dll"
+				};
+				for(final String filename : orToolsLibraryFilenames) {
+					final File file = new File(orToolsLibraryFolder, filename);
+					assert file.exists();
+					assert file.isFile();
+					assert file.canRead();
+					assert file.canExecute();
+					System.load(file.getAbsolutePath());
+				}
+			}
 		}
 		
 		System.loadLibrary("jniortools");
@@ -67,7 +95,6 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 		LOGGER.info("Foreword: We are seing 20 heads and 56 legs.");
 		LOGGER.info("Question: How many " + RABBITS + " and how many " + PHEASANTS + " are we thus seeing?");
 
-		
 		final long t0 = System.nanoTime();
 		final ConstraintSolverParameters parameters = ConstraintSolverParameters.newBuilder().mergeFrom(Solver.defaultSolverParameters()).setTraceSearch(false).build();
 		final Solver solver = new Solver(RABBITS + "&" + PHEASANTS, parameters);
