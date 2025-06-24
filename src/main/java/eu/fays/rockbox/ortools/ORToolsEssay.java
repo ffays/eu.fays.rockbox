@@ -70,6 +70,7 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 			if(orToolsLibraryPath != null && System.getProperty("os.name").indexOf("Windows") != -1) {
 				final File orToolsLibraryFolder = orToolsLibraryPath.toFile().getParentFile();
 				// libraries order does matter !
+				// git clone --depth 1 --branch 'v9.12' https://github.com/google/or-tools.git
 				// Cf. https://github.com/google/or-tools/blob/v9.12/ortools/java/com/google/ortools/Loader.java#L145
 				final String[] orToolsLibraryFilenames = {
 					"zlib1.dll",
