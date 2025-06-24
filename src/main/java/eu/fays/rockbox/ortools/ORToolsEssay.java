@@ -67,9 +67,10 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 			LOGGER.info(JAVA_LIBRARY_PATH + "==" + javaLibraryPath);
 			final String[] javaLibraryPathElements = javaLibraryPath.split(pathSeparator);
 			final Path orToolsLibraryPath = Stream.of(javaLibraryPathElements).flatMap(p -> { try { return walk(Path.of(p), FOLLOW_LINKS); } catch(IOException e) {return Stream.empty();}}).filter(p -> "jniortools.dll".equals(p.getFileName().toString())).findFirst().orElse(null);
-			if(orToolsLibraryPath != null) {
+			if(orToolsLibraryPath != null && System.getProperty("os.name").indexOf("Windows") != -1) {
 				final File orToolsLibraryFolder = orToolsLibraryPath.toFile().getParentFile();
-				// the order of the dll is important.
+				// libraries order does matter !
+				// Cf. https://github.com/google/or-tools/blob/v9.12/ortools/java/com/google/ortools/Loader.java#L145
 				final String[] orToolsLibraryFilenames = {
 					"zlib1.dll",
 					"utf8_validity.dll",
