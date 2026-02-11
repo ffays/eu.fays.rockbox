@@ -63,13 +63,18 @@ public class Librarian {
 	private static final UUID bookshelfId1 = makeNonColonizedNameCompliant(randomUUID());
 	private static final UUID bookshelfId2 = makeNonColonizedNameCompliant(randomUUID());
 	private static final UUID bookshelfId3 = makeNonColonizedNameCompliant(randomUUID());
-	
+	private static final UUID borrowerId1 = makeNonColonizedNameCompliant(randomUUID());
+	private static final UUID borrowerId2 = makeNonColonizedNameCompliant(randomUUID());
+
 	private static final Book book1 = new Book(bookId1, "A la recherche du temps perdu", "Proust", LocalDate.parse("1913-01-01"));
 	private static final Book book2 = new Book(bookId2, "Effective Java 2nd edition", "Joshua Bloch", LocalDate.parse("2008-05-28"));
 	private static final Book book3 = new Book(bookId3, "Effective Java 3rd edition", "Joshua Bloch", LocalDate.parse("2017-12-27"));
 	private static final Book book4 = new Book(bookId4, "Java Concurrency in Practice", "Brian Goetz", LocalDate.parse("2006-05-09"));
 	private static final Book book5 = new Book(bookId5, "UML Distilled 3rd edition", "Martin Fowler", LocalDate.parse("2003-09-15"));
 	private static final Book book6 = new Book(bookId6, "Le rouge et le noir", "Stendhal", LocalDate.parse("1830-11-13"));
+
+	private static final Borrower borrower1 = new Borrower(borrowerId1, "David Livingstone");
+	private static final Borrower borrower2 = new Borrower(borrowerId2, "Henry Morton Stanley");
 
 	/**
 	 * Proof of concept for both XML and JSON, both marshaling and unmarshaling<br>
@@ -102,7 +107,14 @@ public class Librarian {
 					out.print(cartouche("JSON via Jackson"));
 					final String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(library);
 					out.println(json);
+					
+					// Read
+					final Library library2 = mapper.readValue(json, Library.class);
+					out.print(cartouche("JSON via Jackson - read"));
+					final String json2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(library2);
+					out.println(json2);
 				}
+
 				// JSON via Jackson Using a Mix-in
 				{
 					final ObjectMapper mapper = newObjectMapper();
@@ -197,7 +209,6 @@ public class Librarian {
 				//
 				{
 					final Library library = buildLibrary();
-					library.bestBook = book3;	
 					entityManager.getTransaction().begin();
 					entityManager.persist(library);
 					entityManager.getTransaction().commit();
@@ -247,7 +258,13 @@ public class Librarian {
 		bookshelf2.books.add(book5);
 		bookshelf3.books.add(book1);
 		bookshelf3.books.add(book5);
-	
+
+		book1.borrower = borrower1;
+		book6.borrower = borrower2;
+
+		// Best book
+		library.bestBook = book3;
+
 		return library;
 	}
 

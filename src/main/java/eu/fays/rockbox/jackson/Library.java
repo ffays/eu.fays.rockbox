@@ -285,7 +285,7 @@ public class Library {
 	}
 
 	// JSON/Jackson Annotations
-	@JsonIgnore
+	@JsonProperty
 	public Book getBestBook() {
 		return bestBook;
 	}

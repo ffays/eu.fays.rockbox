@@ -61,8 +61,7 @@ public class Borrower {
 	// JPA annotations
 	@Column(name = "username", length = 200)
 	String username;
-	
-	
+
 	public Borrower() {
 		
 	}
@@ -85,10 +84,14 @@ public class Borrower {
 		return id;
 	}
 
-
 	// JSON/Jackson Annotations
 	@JsonProperty
 	public String getUsername() {
+		return username;
+	}
+
+	@Override
+	public String toString() {
 		return username;
 	}
 }

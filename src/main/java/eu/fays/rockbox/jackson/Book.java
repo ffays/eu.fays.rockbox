@@ -10,13 +10,13 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -102,14 +102,14 @@ public class Book {
 	@XmlElement
 	// JPA annotations
 	@JoinColumn(name = "previous_edition")
-	@OneToOne
+	@OneToOne(cascade = CascadeType.PERSIST)
 	Book previousEdition;
 	
 	// XML/JAXB Annotations
 	@XmlElement
 	// JPA annotations
 	@JoinColumn(name = "borrower_uuid")
-	@ManyToOne
+	@OneToOne(cascade = CascadeType.PERSIST)
 	Borrower borrower;
 	
 	/**
@@ -173,14 +173,12 @@ public class Book {
 
 	// JSON/Jackson Annotations
 	@JsonProperty
-	@JsonManagedReference
 	public Book getPreviousEdition() {
 		return previousEdition;
 	}
 
 	// JSON/Jackson Annotations
 	@JsonProperty
-	@JsonManagedReference
 	public Borrower getBorrower() {
 		return borrower;
 	}
