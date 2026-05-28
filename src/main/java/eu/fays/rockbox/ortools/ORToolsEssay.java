@@ -24,6 +24,8 @@ import com.google.ortools.linearsolver.MPVariable;
 // Zsh
 
 // mvn clean dependency:copy-dependencies package
+// mvn exec:java@ORToolsEssay
+
 // java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' eu.fays.rockbox.ortools.ORToolsEssay & sudo fs_usage $!
 
 // find ~/.m2/repository/com/google/ortools -type f -name '*64-9.14.6206.jar' -exec sh -c 'cd $(dirname $1) && jar xvf $1' _ {} \;

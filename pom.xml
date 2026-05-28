@@ -14,6 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
+		<exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
 		<or-tools.version>9.14.6206</or-tools.version>
 	</properties>
 	
@@ -193,6 +194,42 @@
 			<version>${or-tools.version}</version>
 		</dependency>
 	</dependencies>
+	
+	
+	<build>
+		<plugins>
+			<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/exec-maven-plugin -->
+			<!-- https://www.mojohaus.org/exec-maven-plugin/usage.html -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${exec-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>ORToolsEssay</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>eu.fays.rockbox.ortools.ORToolsEssay</mainClass>
+							<systemProperties>
+								<systemProperty>
+									<key>java.util.logging.SimpleFormatter.format</key>
+									<value>%5$s%6$s%n</value>
+								</systemProperty>
+							</systemProperties>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<!-- 
+		Unziping the OR-Tools libraries from the jar file are NOT required,
+		because the method Loader.loadNativeLibraries() unzip them in a temporary folder,
+		before loading them.
+	-->
 	<profiles>
 		<profile>
 			<id>profile-linux-x86_64</id>
@@ -363,6 +400,8 @@
 <description><![CDATA[
 
 mvn clean dependency:copy-dependencies package
+
+mvn exec:java@ORToolsEssay
 
 ]]></description>
 </project>
