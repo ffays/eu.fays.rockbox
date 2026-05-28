@@ -226,7 +226,7 @@
 	</build>
 	
 	<!-- 
-		Unziping the OR-Tools libraries from the jar file are NOT required,
+		Unziping the OR-Tools libraries from the jar file is NOT required,
 		because the method Loader.loadNativeLibraries() unzip them in a temporary folder,
 		before loading them.
 	-->

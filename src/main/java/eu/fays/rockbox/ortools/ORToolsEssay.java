@@ -41,9 +41,15 @@ public class ORToolsEssay {
 	public static final String JAVA_COMMAND = """
 java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
   -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' \
-  -Djava.library.path="target/ortools-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed s/arm/aarch/ | tr '_' '-')" \
   eu.fays.rockbox.ortools.ORToolsEssay
 """;
+	
+	// Unziping the OR-Tools libraries from the jar file is NOT required,
+	// because the method Loader.loadNativeLibraries() unzip them in a temporary folder, before loading them.
+	// Therefore it is not required to have them present on the java.library.path as well.
+
+  // -Djava.library.path="target/ortools-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed s/arm/aarch/ | tr '_' '-')" \
+
 	
 	/** Standard logger */
 	private static final Logger LOGGER = Logger.getLogger(ORToolsEssay.class.getName());
