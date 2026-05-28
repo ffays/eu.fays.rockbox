@@ -217,6 +217,10 @@
 									<key>java.util.logging.SimpleFormatter.format</key>
 									<value>%5$s%6$s%n</value>
 								</systemProperty>
+								<systemProperty>
+									<key>java.library.path</key>
+									<value>target/ortools-win32-x86-64</value>
+								</systemProperty>
 							</systemProperties>
 						</configuration>
 					</execution>
