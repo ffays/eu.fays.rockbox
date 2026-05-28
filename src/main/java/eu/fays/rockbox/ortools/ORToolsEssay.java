@@ -37,8 +37,8 @@ import com.google.ortools.linearsolver.MPVariable;
 // mvn clean dependency:copy-dependencies package
 // mvn exec:java@ORToolsEssay
 
-// java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' eu.fays.rockbox.ortools.ORToolsEssay & sudo fs_usage $!
-// java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' -Djava.library.path="target/ortools-$(uname -s|sed 's/MINGW.*/win32/;s/Linux/linux/;s/Darwin/darwin/')-$(uname -m | sed s/arm/aarch/ | tr '_' '-')" eu.fays.rockbox.ortools.ORToolsEssay & sudo fs_usage $!
+// java -cp "$(ls -1 target/*.jar target/**/*.jar | paste -s -d ':' -)" -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' eu.fays.rockbox.ortools.ORToolsEssay & sudo fs_usage $!
+// java -cp "$(ls -1 target/*.jar target/**/*.jar | paste -s -d ':' -)" -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' -Djava.library.path="target/ortools-$(uname -s|sed 's/MINGW.*/win32/;s/Linux/linux/;s/Darwin/darwin/')-$(uname -m | sed s/arm/aarch/ | tr '_' '-')" eu.fays.rockbox.ortools.ORToolsEssay & sudo fs_usage $!
 
 // find ~/.m2/repository/com/google/ortools -type f -name '*64-9.14.6206.jar' -exec sh -c 'cd $(dirname $1) && jar xvf $1' _ {} \;
 // find ~/.m2/repository/com/google/ortools -type f -name '*jniortools*' -exec dirname {} \; | cut -c $((${#HOME}+2))- | sed 's|^|${system_property:user.home}/|' | paste -s -d ":" -
@@ -107,6 +107,7 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 				final String absolutePath = file.toAbsolutePath().toString();
 				
 				if(exists(file) && isRegularFile(file) && isReadable(file) && isExecutable(file)) {
+//					System.loadLibrary(basename);
 					Runtime.getRuntime().load(absolutePath);
 					LOGGER.fine("Loaded: " + absolutePath);
 				} else {
