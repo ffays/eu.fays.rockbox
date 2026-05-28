@@ -2,9 +2,13 @@ package eu.fays.rockbox.ortools;
 
 import static java.io.File.pathSeparator;
 import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isExecutable;
+import static java.nio.file.Files.isReadable;
+import static java.nio.file.Files.isRegularFile;
 import static java.nio.file.Files.walk;
+import static java.text.MessageFormat.format;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.logging.Logger;
@@ -74,7 +78,7 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 		final String[] javaLibraryPathElements = javaLibraryPath.split(pathSeparator);
 		final Path orToolsLibraryPath = Stream.of(javaLibraryPathElements).flatMap(p -> { try { return walk(Path.of(p), FOLLOW_LINKS); } catch(IOException e) {return Stream.empty();}}).filter(p -> "jniortools.dll".equals(p.getFileName().toString())).findFirst().orElse(null);
 		if(orToolsLibraryPath != null && System.getProperty("os.name").indexOf("Windows") != -1) {
-			final File orToolsLibraryFolder = orToolsLibraryPath.toFile().getParentFile();
+			final Path orToolsLibraryFolder = orToolsLibraryPath.getParent();
 			// libraries order does matter !
 			// git clone --depth 1 --branch 'v9.14' https://github.com/google/or-tools.git
 			// cf. https://github.com/google/or-tools/blob/v9.14/ortools/java/com/google/ortools/Loader.java#L147
@@ -84,7 +88,7 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 			//   ldd *.dll
 			
 			// @formatter:off
-			final String[] orToolsLibraryFilenames = {
+			final String[] orToolsLibraryBasenames = {
 				"zlib1",
 				"bz2",
 				"abseil_dll",
@@ -97,15 +101,19 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 				"jniortools" // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll", "ortools.dll"
 			};
 			// @formatter:on
-			for(final String filename : orToolsLibraryFilenames) {
-				final File file = new File(orToolsLibraryFolder, filename);
-				assert file.exists();
-				assert file.isFile();
-				assert file.canRead();
-				assert file.canExecute();
-				System.load(file.getAbsolutePath());
+			for(final String basename : orToolsLibraryBasenames) {
+				final String filename = basename + ".dll";
+				final Path file = orToolsLibraryFolder.resolve(filename);
+				final String absolutePath = file.toAbsolutePath().toString();
+				
+				if(exists(file) && isRegularFile(file) && isReadable(file) && isExecutable(file)) {
+					Runtime.getRuntime().load(absolutePath);
+					LOGGER.fine("Loaded: " + absolutePath);
+				} else {
+					LOGGER.warning(format("Library: {0}, exists: {1}, regularFile: {2}, readable: {3}, executable: {4}!", absolutePath, exists(file), isRegularFile(file), isReadable(file), isExecutable(file)));
+				}	
 			}
-			
+
 			System.loadLibrary("jniortools");
 		} else {
 			Loader.loadNativeLibraries();
