@@ -21,6 +21,10 @@ import com.google.ortools.linearsolver.MPObjective;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPVariable;
 
+// Unziping the OR-Tools libraries from the jar file is NOT required,
+// because the method Loader.loadNativeLibraries() unzip them in a temporary folder, before loading them.
+// Therefore it is not required to have them present on the java.library.path as well.
+
 // Google OR-Tools requires the installation of the Microsoft Visual C++ Redistributable libraries when running on Windows
 // [Microsoft Latest Supported Visual C++ Downloads page](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 
@@ -30,6 +34,7 @@ import com.google.ortools.linearsolver.MPVariable;
 // mvn exec:java@ORToolsEssay
 
 // java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' eu.fays.rockbox.ortools.ORToolsEssay & sudo fs_usage $!
+// java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' -Djava.library.path="target/ortools-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed s/arm/aarch/ | tr '_' '-')" eu.fays.rockbox.ortools.ORToolsEssay & sudo fs_usage $!
 
 // find ~/.m2/repository/com/google/ortools -type f -name '*64-9.14.6206.jar' -exec sh -c 'cd $(dirname $1) && jar xvf $1' _ {} \;
 // find ~/.m2/repository/com/google/ortools -type f -name '*jniortools*' -exec dirname {} \; | cut -c $((${#HOME}+2))- | sed 's|^|${system_property:user.home}/|' | paste -s -d ":" -
@@ -46,13 +51,6 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
   -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' \
   eu.fays.rockbox.ortools.ORToolsEssay
 """;
-	
-	// Unziping the OR-Tools libraries from the jar file is NOT required,
-	// because the method Loader.loadNativeLibraries() unzip them in a temporary folder, before loading them.
-	// Therefore it is not required to have them present on the java.library.path as well.
-
-  // -Djava.library.path="target/ortools-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed s/arm/aarch/ | tr '_' '-')" \
-
 	
 	/** Standard logger */
 	private static final Logger LOGGER = Logger.getLogger(ORToolsEssay.class.getName());
