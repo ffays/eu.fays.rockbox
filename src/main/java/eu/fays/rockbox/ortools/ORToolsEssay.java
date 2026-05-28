@@ -21,6 +21,9 @@ import com.google.ortools.linearsolver.MPObjective;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPVariable;
 
+// Google OR-Tools requires the installation of the Microsoft Visual C++ Redistributable libraries when running on Windows
+// [Microsoft Latest Supported Visual C++ Downloads page](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
+
 // Zsh
 
 // mvn clean dependency:copy-dependencies package
