@@ -403,6 +403,9 @@
 	</profiles>
 <description><![CDATA[
 
+# Powershell only
+$env:MAVEN_OPTS="-Djava.library.path=target\ortools-win32-x86-64"
+
 mvn clean dependency:copy-dependencies package
 
 mvn exec:java@ORToolsEssay
