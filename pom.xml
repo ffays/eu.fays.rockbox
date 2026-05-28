@@ -13,6 +13,8 @@
 		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
+		<or-tools.version>9.14.6206</or-tools.version>
 	</properties>
 	
 	<dependencies>
@@ -188,9 +190,176 @@
 		<dependency>
 			<groupId>com.google.ortools</groupId>
 			<artifactId>ortools-java</artifactId>
-			<version>9.12.4544</version>
+			<version>${or-tools.version}</version>
 		</dependency>
 	</dependencies>
+	<profiles>
+		<profile>
+			<id>profile-linux-x86_64</id>
+			<activation>
+				<os>
+					<name>Linux</name>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>${maven-antrun-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>maven-antrun-linux-x86_64</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<echo>Profile: profile-linux-x86_64</echo>
+										<unjar src="${project.build.directory}/dependency/ortools-linux-x86-64-${or-tools.version}.jar" dest="${project.build.directory}" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>profile-linux-aarch64</id>
+			<activation>
+				<os>
+					<name>Linux</name>
+					<arch>aarch64</arch>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>${maven-antrun-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>maven-antrun-linux-aarch64</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<echo>Profile: profile-linux-aarch64</echo>
+										<unjar src="${project.build.directory}/dependency/ortools-linux-aarch64-${or-tools.version}.jar" dest="${project.build.directory}" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>profile-macosx-x86_64</id>
+			<activation>
+				<os>
+					<name>Mac OS X</name>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>${maven-antrun-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>maven-antrun-macosx-x86_64</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<echo>Profile: profile-macosx-x86_64</echo>
+										<unjar src="${project.build.directory}/dependency/ortools-darwin-x86-64-${or-tools.version}.jar" dest="${project.build.directory}" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>profile-macosx-aarch64</id>
+			<activation>
+				<os>
+					<name>Mac OS X</name>
+					<arch>aarch64</arch>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>${maven-antrun-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>maven-antrun-macosx-aarch64</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<echo>Profile: profile-macosx-aarch64</echo>
+										<unjar src="${project.build.directory}/dependency/ortools-darwin-aarch64-${or-tools.version}.jar" dest="${project.build.directory}" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>profile-windows-x86_64</id>
+			<activation>
+				<os>
+					<family>Windows</family>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>${maven-antrun-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>maven-antrun-windows-x86_64</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<echo>Profile: profile-windows-x86_64</echo>
+										<unjar src="${project.build.directory}/dependency/ortools-win32-x86-64-${or-tools.version}.jar" dest="${project.build.directory}" />
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 <description><![CDATA[
 
 mvn clean dependency:copy-dependencies package

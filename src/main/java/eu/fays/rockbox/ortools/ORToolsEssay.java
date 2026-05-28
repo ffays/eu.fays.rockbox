@@ -16,19 +16,18 @@ import com.google.ortools.constraintsolver.DecisionBuilder;
 import com.google.ortools.constraintsolver.IntVar;
 import com.google.ortools.constraintsolver.Solver;
 import com.google.ortools.init.OrToolsVersion;
+import com.google.ortools.linearsolver.MPConstraint;
+import com.google.ortools.linearsolver.MPObjective;
+import com.google.ortools.linearsolver.MPSolver;
+import com.google.ortools.linearsolver.MPVariable;
 
 // Zsh
-/*
-mvn clean dependency:copy-dependencies package
-find ~/.m2/repository/com/google/ortools -type f -name '*64-9.12.4544.jar' -exec sh -c 'cd $(dirname $1) && jar xvf $1' _ {} \;
-find ~/.m2/repository/com/google/ortools -type f -name '*jniortools*' -exec dirname {} \; | cut -c $((${#HOME}+2))- | sed 's|^|${system_property:user.home}/|' | paste -s -d ":" -
- */
 
-// VM Args
-/*
--Djava.util.logging.SimpleFormatter.format="%5$s%6$s%n"
--Djava.library.path=${system_property:user.home}/.m2/repository/com/google/ortools/ortools-win32-x86-64/9.12.4544/ortools-win32-x86-64:${system_property:user.home}/.m2/repository/com/google/ortools/ortools-darwin-aarch64/9.12.4544/ortools-darwin-aarch64:${system_property:user.home}/.m2/repository/com/google/ortools/ortools-linux-x86-64/9.12.4544/ortools-linux-x86-64:${system_property:user.home}/.m2/repository/com/google/ortools/ortools-linux-aarch64/9.12.4544/ortools-linux-aarch64:${system_property:user.home}/.m2/repository/com/google/ortools/ortools-darwin-x86-64/9.12.4544/ortools-darwin-x86-64
-*/
+// mvn clean dependency:copy-dependencies package
+// java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' eu.fays.rockbox.ortools.ORToolsEssay & sudo fs_usage $!
+
+// find ~/.m2/repository/com/google/ortools -type f -name '*64-9.14.6206.jar' -exec sh -c 'cd $(dirname $1) && jar xvf $1' _ {} \;
+// find ~/.m2/repository/com/google/ortools -type f -name '*jniortools*' -exec dirname {} \; | cut -c $((${#HOME}+2))- | sed 's|^|${system_property:user.home}/|' | paste -s -d ":" -
 
 /**
  * OR-Tools essay 
@@ -40,7 +39,7 @@ public class ORToolsEssay {
 	public static final String JAVA_COMMAND = """
 java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
   -Djava.util.logging.SimpleFormatter.format='%5$s%6$s%n' \
-  -Djava.library.path="$(dirname ~/.m2/repository/com/google/ortools/**/*jniortools* | paste -s -d ':' -)" \
+  -Djava.library.path="target/ortools-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed s/arm/aarch/ | tr '_' '-')" \
   eu.fays.rockbox.ortools.ORToolsEssay
 """;
 	
@@ -61,36 +60,43 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 	 * @param args unused
 	 */
 	public static void main(String[] args) {
-		if (System.getProperty("os.name").indexOf("Windows") != -1) {
-			LOGGER.fine(JAVA_LIBRARY_PATH + "=" +System.getProperty(JAVA_LIBRARY_PATH));
-			final String javaLibraryPath = System.getProperty(JAVA_LIBRARY_PATH);
-			LOGGER.info(JAVA_LIBRARY_PATH + "==" + javaLibraryPath);
-			final String[] javaLibraryPathElements = javaLibraryPath.split(pathSeparator);
-			final Path orToolsLibraryPath = Stream.of(javaLibraryPathElements).flatMap(p -> { try { return walk(Path.of(p), FOLLOW_LINKS); } catch(IOException e) {return Stream.empty();}}).filter(p -> "jniortools.dll".equals(p.getFileName().toString())).findFirst().orElse(null);
-			if(orToolsLibraryPath != null && System.getProperty("os.name").indexOf("Windows") != -1) {
-				final File orToolsLibraryFolder = orToolsLibraryPath.toFile().getParentFile();
-				// libraries order does matter !
-				// git clone --depth 1 --branch 'v9.12' https://github.com/google/or-tools.git
-				// Cf. https://github.com/google/or-tools/blob/v9.12/ortools/java/com/google/ortools/Loader.java#L145
-				final String[] orToolsLibraryFilenames = {
-					"zlib1.dll",
-					"utf8_validity.dll",
-					"highs.dll",
-					"abseil_dll.dll",
-					"re2.dll", // requires "abseil_dll.dll"
-					"libprotobuf.dll", // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll"
-					"ortools.dll", // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll"
-					"jniortools.dll" // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll", "ortools.dll"
-				};
-				for(final String filename : orToolsLibraryFilenames) {
-					final File file = new File(orToolsLibraryFolder, filename);
-					assert file.exists();
-					assert file.isFile();
-					assert file.canRead();
-					assert file.canExecute();
-					System.load(file.getAbsolutePath());
-				}
+		final String javaLibraryPath = System.getProperty(JAVA_LIBRARY_PATH);
+		LOGGER.info(JAVA_LIBRARY_PATH + "=" + javaLibraryPath);
+		final String[] javaLibraryPathElements = javaLibraryPath.split(pathSeparator);
+		final Path orToolsLibraryPath = Stream.of(javaLibraryPathElements).flatMap(p -> { try { return walk(Path.of(p), FOLLOW_LINKS); } catch(IOException e) {return Stream.empty();}}).filter(p -> "jniortools.dll".equals(p.getFileName().toString())).findFirst().orElse(null);
+		if(orToolsLibraryPath != null && System.getProperty("os.name").indexOf("Windows") != -1) {
+			final File orToolsLibraryFolder = orToolsLibraryPath.toFile().getParentFile();
+			// libraries order does matter !
+			// git clone --depth 1 --branch 'v9.14' https://github.com/google/or-tools.git
+			// cf. https://github.com/google/or-tools/blob/v9.14/ortools/java/com/google/ortools/Loader.java#L147
+			
+			// On Windows, use Bash command from Cigwin that comes with the Git installation 
+			//   cd  ~/workspace-mangogem-aps/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/plugins/com.google.or-tools.win32.win32.x86_64_9.14.6206/ortools-win32-x86-64
+			//   ldd *.dll
+			
+			// @formatter:off
+			final String[] orToolsLibraryFilenames = {
+				"zlib1",
+				"bz2",
+				"abseil_dll",
+				"re2", // requires "abseil_dll.dll"
+				"libutf8_validity",
+				"libprotobuf", // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll"
+				"highs",
+				"libscip", // requires "zlib1"
+				"ortools", // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll"
+				"jniortools" // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll", "ortools.dll"
+			};
+			// @formatter:on
+			for(final String filename : orToolsLibraryFilenames) {
+				final File file = new File(orToolsLibraryFolder, filename);
+				assert file.exists();
+				assert file.isFile();
+				assert file.canRead();
+				assert file.canExecute();
+				System.load(file.getAbsolutePath());
 			}
+			
 			System.loadLibrary("jniortools");
 		} else {
 			Loader.loadNativeLibraries();
@@ -115,6 +121,70 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 		solver.endSearch();
 		final long delta = (t1 - t0) / 1_000_000L;
 		LOGGER.info("Duration: " + delta + " ms");
+		
+		linearProgrammingExample();
 	}
+	
+	 public static void linearProgrammingExample() {
+	    // [START solver]
+	    MPSolver solver = MPSolver.createSolver("GLOP");
+	    // [END solver]
+
+	    // [START variables]
+	    double infinity = java.lang.Double.POSITIVE_INFINITY;
+	    // x and y are continuous non-negative variables.
+	    MPVariable x = solver.makeNumVar(0.0, infinity, "x");
+	    MPVariable y = solver.makeNumVar(0.0, infinity, "y");
+	    LOGGER.info("Number of variables = " + solver.numVariables());
+	    // [END variables]
+
+	    // [START constraints]
+	    // x + 2*y <= 14.
+	    MPConstraint c0 = solver.makeConstraint(-infinity, 14.0, "c0");
+	    c0.setCoefficient(x, 1);
+	    c0.setCoefficient(y, 2);
+
+	    // 3*x - y >= 0.
+	    MPConstraint c1 = solver.makeConstraint(0.0, infinity, "c1");
+	    c1.setCoefficient(x, 3);
+	    c1.setCoefficient(y, -1);
+
+	    // x - y <= 2.
+	    MPConstraint c2 = solver.makeConstraint(-infinity, 2.0, "c2");
+	    c2.setCoefficient(x, 1);
+	    c2.setCoefficient(y, -1);
+	    LOGGER.info("Number of constraints = " + solver.numConstraints());
+	    // [END constraints]
+
+	    // [START objective]
+	    // Maximize 3 * x + 4 * y.
+	    MPObjective objective = solver.objective();
+	    objective.setCoefficient(x, 3);
+	    objective.setCoefficient(y, 4);
+	    objective.setMaximization();
+	    // [END objective]
+
+	    // [START solve]
+	    final MPSolver.ResultStatus resultStatus = solver.solve();
+	    // [END solve]
+
+	    // [START print_solution]
+	    if (resultStatus == MPSolver.ResultStatus.OPTIMAL) {
+	      LOGGER.info("Solution:");
+	      LOGGER.info("Objective value = " + objective.value());
+	      LOGGER.info("x = " + x.solutionValue());
+	      LOGGER.info("y = " + y.solutionValue());
+	    } else {
+	      System.err.println("The problem does not have an optimal solution!");
+	    }
+	    // [END print_solution]
+
+	    // [START advanced]
+	    LOGGER.info("Advanced usage:");
+	    LOGGER.info("Problem solved in " + solver.wallTime() + " milliseconds");
+	    LOGGER.info("Problem solved in " + solver.iterations() + " iterations");
+	    // [END advanced]
+
+	 }
 
 }
