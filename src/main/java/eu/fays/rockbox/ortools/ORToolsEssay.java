@@ -25,6 +25,8 @@ import com.google.ortools.linearsolver.MPObjective;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPVariable;
 
+import eu.fays.rockbox.premain.PremainAgent;
+
 // Unziping the OR-Tools libraries from the jar file is NOT required,
 // because the method Loader.loadNativeLibraries() unzip them in a temporary folder, before loading them.
 // Therefore it is not required to have them present on the java.library.path as well.
@@ -71,8 +73,9 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 	/**
 	 * Main
 	 * @param args unused
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		final String javaLibraryPath = System.getProperty(JAVA_LIBRARY_PATH);
 		LOGGER.info(JAVA_LIBRARY_PATH + "=" + javaLibraryPath);
 		final String[] javaLibraryPathElements = javaLibraryPath.split(pathSeparator);
@@ -140,6 +143,9 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 		final long delta = (t1 - t0) / 1_000_000L;
 		LOGGER.info("Duration: " + delta + " ms");
 		
+		PremainAgent.logLoadedClasses(ORToolsEssay.class.getClassLoader());
+		System.out.println("Press any key to continue");
+		System.in.read();
 		linearProgrammingExample();
 	}
 	
