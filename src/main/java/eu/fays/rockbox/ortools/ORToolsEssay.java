@@ -3,11 +3,13 @@ package eu.fays.rockbox.ortools;
 import static java.io.File.pathSeparator;
 import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isExecutable;
 import static java.nio.file.Files.isReadable;
 import static java.nio.file.Files.isRegularFile;
 import static java.nio.file.Files.walk;
 import static java.text.MessageFormat.format;
+import static java.util.logging.Level.SEVERE;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -66,6 +68,9 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 	/** java.library.path */
 	private static final String JAVA_LIBRARY_PATH = "java.library.path";
 
+	/** jniortools.dll */
+	private static final String JNIORTOOLS_DLL = "jniortools.dll";
+
 	/** rabbits */
 	private static final String RABBITS = "rabbits";
 
@@ -80,75 +85,94 @@ java -cp "$(ls -1 target/**/*.jar | paste -s -d ':' -)" \
 	public static void main(String[] args) throws IOException {
 		final String javaLibraryPath = System.getProperty(JAVA_LIBRARY_PATH);
 		LOGGER.info(JAVA_LIBRARY_PATH + "=" + javaLibraryPath);
-		final String[] javaLibraryPathElements = javaLibraryPath.split(pathSeparator);
-		final Path orToolsLibraryPath = Stream.of(javaLibraryPathElements).flatMap(p -> { try { return walk(Path.of(p), FOLLOW_LINKS); } catch(IOException e) {return Stream.empty();}}).filter(p -> "jniortools.dll".equals(p.getFileName().toString())).findFirst().orElse(null);
-		if(orToolsLibraryPath != null && System.getProperty("os.name").indexOf("Windows") != -1) {
-			final Path orToolsLibraryFolder = orToolsLibraryPath.getParent();
-			// libraries order does matter !
-			// git clone --depth 1 --branch 'v9.14' https://github.com/google/or-tools.git
-			// cf. https://github.com/google/or-tools/blob/v9.14/ortools/java/com/google/ortools/Loader.java#L147
-			
-			// On Windows, use Bash command from Cigwin that comes with the Git installation 
-			//   cd  ~/workspace-mangogem-aps/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/plugins/com.google.or-tools.win32.win32.x86_64_9.14.6206/ortools-win32-x86-64
-			//   ldd *.dll
-			
-			// @formatter:off
-			final String[] orToolsLibraryBasenames = {
-				"zlib1",
-				"bz2",
-				"abseil_dll",
-				"re2", // requires "abseil_dll.dll"
-				"libutf8_validity",
-				"libprotobuf", // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll"
-				"highs",
-				"libscip", // requires "zlib1"
-				"ortools", // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll"
-				"jniortools" // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll", "ortools.dll"
-			};
-			// @formatter:on
-			for(final String basename : orToolsLibraryBasenames) {
-				final String filename = basename + ".dll";
-				final Path file = orToolsLibraryFolder.resolve(filename);
-				final String absolutePath = file.toAbsolutePath().toString();
-				
-				if(exists(file) && isRegularFile(file) && isReadable(file) && isExecutable(file)) {
-//					System.loadLibrary(basename);
-					Runtime.getRuntime().load(absolutePath);
-					LOGGER.info("Loaded: " + absolutePath);
-				} else {
-					LOGGER.warning(format("Library: {0}, exists: {1}, regularFile: {2}, readable: {3}, executable: {4}!", absolutePath, exists(file), isRegularFile(file), isReadable(file), isExecutable(file)));
-				}	
+		if (javaLibraryPath != null && !javaLibraryPath.isEmpty()) {
+			final boolean isWindowsOperatingSystem = System.getProperty("os.name").indexOf("Windows") != -1;
+			final String[] javaLibraryPathElements = javaLibraryPath.split(pathSeparator);
+			Path orToolsLibraryPath = null;
+			if(isWindowsOperatingSystem) {
+				for (final String javaLibraryPathElement : javaLibraryPathElements) {
+					final Path path = Path.of(javaLibraryPathElement);
+					if(exists(path) && isDirectory(path)) {
+						try {
+							orToolsLibraryPath = walk(path, FOLLOW_LINKS).filter(p -> JNIORTOOLS_DLL.equals(p.getFileName().toString())).findFirst().orElse(null);
+							if(orToolsLibraryPath != null) {
+								break;
+							}
+						} catch(final IOException e) {
+							LOGGER.log(SEVERE, e.getMessage(), e);
+						}
+					}
+				}
 			}
 
-			System.loadLibrary("jniortools");
-		} else {
-			Loader.loadNativeLibraries();
+			if (isWindowsOperatingSystem && orToolsLibraryPath != null) {
+				final Path orToolsLibraryFolder = orToolsLibraryPath.getParent();
+				// libraries order does matter !
+				// git clone --depth 1 --branch 'v9.14' https://github.com/google/or-tools.git
+				// cf. https://github.com/google/or-tools/blob/v9.14/ortools/java/com/google/ortools/Loader.java#L147
+				
+				// On Windows, use Bash command from Cigwin that comes with the Git installation 
+				//   cd  ~/workspace-mangogem-aps/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/plugins/com.google.or-tools.win32.win32.x86_64_9.14.6206/ortools-win32-x86-64
+				//   ldd *.dll
+				
+				// @formatter:off
+				final String[] orToolsLibraryBasenames = {
+					"zlib1",
+					"bz2",
+					"abseil_dll",
+					"re2", // requires "abseil_dll.dll"
+					"libutf8_validity",
+					"libprotobuf", // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll"
+					"highs",
+					"libscip", // requires "zlib1"
+					"ortools", // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll"
+					JNIORTOOLS_DLL // requires "abseil_dll.dll", "utf8_validity.dll", "zlib1.dll", "highs.dll", "ortools.dll"
+				};
+				// @formatter:on
+				for(final String basename : orToolsLibraryBasenames) {
+					final String filename = basename + ".dll";
+					final Path file = orToolsLibraryFolder.resolve(filename);
+					final String absolutePath = file.toAbsolutePath().toString();
+					
+					if(exists(file) && isRegularFile(file) && isReadable(file) && isExecutable(file)) {
+	//					System.loadLibrary(basename);
+						Runtime.getRuntime().load(absolutePath);
+						LOGGER.info("Loaded: " + absolutePath);
+					} else {
+						LOGGER.warning(format("Library: {0}, exists: {1}, regularFile: {2}, readable: {3}, executable: {4}!", absolutePath, exists(file), isRegularFile(file), isReadable(file), isExecutable(file)));
+					}	
+				}
+	
+				System.loadLibrary("jniortools");
+			} else {
+				Loader.loadNativeLibraries();
+			}
+			LOGGER.info("OR-Tools: " + OrToolsVersion.getVersionString());
+			LOGGER.info("Foreword: We are seing 20 heads and 56 legs.");
+			LOGGER.info("Question: How many " + RABBITS + " and how many " + PHEASANTS + " are we thus seeing?");
+	
+			final long t0 = System.nanoTime();
+			final ConstraintSolverParameters parameters = ConstraintSolverParameters.newBuilder().mergeFrom(Solver.defaultSolverParameters()).setTraceSearch(false).build();
+			final Solver solver = new Solver(RABBITS + "&" + PHEASANTS, parameters);
+	
+			final IntVar rabbits = solver.makeIntVar(0, 100, RABBITS);
+			final IntVar pheasants = solver.makeIntVar(0, 100, PHEASANTS);
+			solver.addConstraint(solver.makeEquality(solver.makeSum(rabbits, pheasants), 20));
+			solver.addConstraint(solver.makeEquality(solver.makeSum(solver.makeProd(rabbits, 4), solver.makeProd(pheasants, 2)), 56));
+			final DecisionBuilder decisionBuilder = solver.makePhase(rabbits, pheasants, Solver.CHOOSE_FIRST_UNBOUND, Solver.ASSIGN_MIN_VALUE);
+			solver.newSearch(decisionBuilder);
+			solver.nextSolution();
+			final long t1 = System.nanoTime();
+			LOGGER.info("Solution: there is " + rabbits.value() + " " + RABBITS + " and " + pheasants.value() + " " + PHEASANTS + "!");
+			solver.endSearch();
+			final long delta = (t1 - t0) / 1_000_000L;
+			LOGGER.info("Duration: " + delta + " ms");
+			
+			linearProgrammingExample();
+			PremainAgent.logLoadedClasses(ORToolsEssay.class.getClassLoader());
+//			System.out.println("Press any key to continue");
+//			System.in.read();
 		}
-		LOGGER.info("OR-Tools: " + OrToolsVersion.getVersionString());
-		LOGGER.info("Foreword: We are seing 20 heads and 56 legs.");
-		LOGGER.info("Question: How many " + RABBITS + " and how many " + PHEASANTS + " are we thus seeing?");
-
-		final long t0 = System.nanoTime();
-		final ConstraintSolverParameters parameters = ConstraintSolverParameters.newBuilder().mergeFrom(Solver.defaultSolverParameters()).setTraceSearch(false).build();
-		final Solver solver = new Solver(RABBITS + "&" + PHEASANTS, parameters);
-
-		final IntVar rabbits = solver.makeIntVar(0, 100, RABBITS);
-		final IntVar pheasants = solver.makeIntVar(0, 100, PHEASANTS);
-		solver.addConstraint(solver.makeEquality(solver.makeSum(rabbits, pheasants), 20));
-		solver.addConstraint(solver.makeEquality(solver.makeSum(solver.makeProd(rabbits, 4), solver.makeProd(pheasants, 2)), 56));
-		final DecisionBuilder decisionBuilder = solver.makePhase(rabbits, pheasants, Solver.CHOOSE_FIRST_UNBOUND, Solver.ASSIGN_MIN_VALUE);
-		solver.newSearch(decisionBuilder);
-		solver.nextSolution();
-		final long t1 = System.nanoTime();
-		LOGGER.info("Solution: there is " + rabbits.value() + " " + RABBITS + " and " + pheasants.value() + " " + PHEASANTS + "!");
-		solver.endSearch();
-		final long delta = (t1 - t0) / 1_000_000L;
-		LOGGER.info("Duration: " + delta + " ms");
-		
-		PremainAgent.logLoadedClasses(ORToolsEssay.class.getClassLoader());
-		System.out.println("Press any key to continue");
-		System.in.read();
-		linearProgrammingExample();
 	}
 	
 	 public static void linearProgrammingExample() {
